@@ -155,6 +155,16 @@
           <span class="hidden md:inline">Cargar PDFs</span>
         </button>
 
+        <button id="btnOpenRoutingModal" title="Configurar y routear archivos PDF por instrumento" class="px-2.5 py-1.5 rounded-xl bg-[#1e2432] hover:bg-[#272f42] border border-[#2d364a] text-slate-200 text-xs font-medium transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-[#e5b869]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="hidden md:inline">Routear</span>
+        </button>
+
+        <button id="btnOpenMusicianLibrary" title="Ver o descargar partituras desde el Maestro" class="hidden px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/35 text-[#e5b869] text-xs font-medium transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span class="hidden sm:inline">Del Maestro</span>
+        </button>
+
         <button id="btnOpenConnModal" class="px-2.5 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/35 text-emerald-200 text-xs font-semibold transition flex items-center gap-1.5">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.14 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
           <span>Conectar</span>
@@ -216,7 +226,8 @@
           <span id="panelMasterSubtitle" class="text-[10px] uppercase tracking-wider font-semibold text-[#e5b869]">Control Maestro</span>
           <h2 class="text-sm font-semibold text-slate-100">Repertorio</h2>
         </div>
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1 flex-wrap justify-end">
+          <button id="btnOpenBaseListModal" class="px-2 py-1 rounded-lg bg-[#1e2432] hover:bg-[#272f42] text-xs font-medium text-emerald-300 border border-[#2d364a] transition">Lista / Limpiar</button>
           <button id="btnOpenGenreModal" class="px-2 py-1 rounded-lg bg-[#1e2432] hover:bg-[#272f42] text-xs font-medium text-sky-300 border border-[#2d364a] transition">Géneros</button>
           <button id="btnAddSongModal" class="px-2.5 py-1 rounded-lg bg-[#1e2432] hover:bg-[#272f42] text-xs font-medium text-[#e5b869] border border-[#2d364a] transition">+ Canción</button>
         </div>
@@ -280,6 +291,18 @@
         </div>
 
         <div id="stageCueBanner" class="hidden bg-rose-500/90 text-white px-4 py-2 rounded-xl font-semibold text-center text-sm tracking-wide shadow-lg">Mambo Metales</div>
+
+        <div id="remotePdfBar" class="hidden surface-2 border border-[#e5b869]/35 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2 min-w-0">
+            <span class="w-2 h-2 rounded-full bg-[#e5b869] shrink-0"></span>
+            <span id="remotePdfInfoText" class="text-slate-200 truncate">Disponible en Maestro</span>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span id="remotePdfProgress" class="text-[11px] text-sky-300 font-mono hidden"></span>
+            <button id="btnRemoteViewPdf" class="px-2.5 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/35 text-sky-200 text-xs font-medium transition">Ver en línea</button>
+            <button id="btnRemoteDownloadPdf" class="px-2.5 py-1 rounded-lg bg-[#e5b869] hover:bg-[#ecc57e] text-[#11151d] text-xs font-semibold transition">Descargar (Offline)</button>
+          </div>
+        </div>
 
         <!-- TOUCH SURFACE WITH PINCH-TO-ZOOM -->
         <div id="scoreTouchSurface" class="relative flex-1 flex items-start justify-center bg-[#0d1017] rounded-xl p-2 sm:p-4 border border-[#222938] min-h-[420px] overflow-auto cursor-pointer">
@@ -350,10 +373,25 @@
         <button id="btnCloseFolderModal" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
       </div>
       <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-        <p>Se guardan dentro de este dispositivo (<strong>IndexedDB</strong>) para abrirse incluso sin internet. Formato sugerido:</p>
-        <div class="surface-2 border rounded-xl p-3 font-mono text-[11px] text-[#e5b869] space-y-1">
-          <div>• Cancion 1 - Trompeta 1.pdf</div>
-          <div>• Cancion 1 - Trompeta 2.pdf</div>
+        <p>Se guardan en este dispositivo (<strong>IndexedDB</strong>) sin internet. Elige si la app detecta el instrumento del nombre o si todos los PDFs que vas a subir son de un solo instrumento:</p>
+        <div class="surface-2 border rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-medium text-slate-200">Instrumento de estos PDFs:</span>
+          <select id="selectBatchInstrument" class="bg-[#181d27] border border-[#2d364a] rounded-lg px-2.5 py-1.5 text-xs font-semibold text-[#e5b869] focus:outline-none">
+            <option value="AUTO">Detectar por nombre (Tema - Instrumento)</option>
+            <option value="Trompeta 1">Todos son de: Trompeta 1</option>
+            <option value="Trompeta 2">Todos son de: Trompeta 2</option>
+            <option value="Trompeta 3">Todos son de: Trompeta 3</option>
+            <option value="Saxo Alto">Todos son de: Saxo Alto</option>
+            <option value="Saxo Tenor">Todos son de: Saxo Tenor</option>
+            <option value="Piano">Todos son de: Piano</option>
+            <option value="Bajo">Todos son de: Bajo</option>
+            <option value="Guitarra">Todos son de: Guitarra</option>
+            <option value="Percusión">Todos son de: Percusión</option>
+          </select>
+        </div>
+        <div class="surface-2 border rounded-xl p-2.5 font-mono text-[11px] text-slate-300 space-y-0.5">
+          <div class="text-[#e5b869]">Formato estándar: <strong>[Nombre de la Canción] - [Instrumento].pdf</strong></div>
+          <div class="text-slate-400">La app limpia y estandariza automáticamente variantes (ej. <em>Lloraras, Trompeta 1.pdf</em> o <em>pajarito. Trompeta 3.pdf</em>) y detecta subcarpetas por instrumento (<em>Trompeta 1</em>, <em>Trompeta 3</em>, <em>Sax Alto</em>, <em>Sax Tenor</em>).</div>
         </div>
         <label class="block w-full cursor-pointer">
           <div class="border-2 border-dashed border-sky-500/40 hover:border-sky-400 bg-sky-950/20 rounded-xl p-5 text-center transition">
@@ -368,9 +406,14 @@
             <input id="inputBatchFolderPc" type="file" webkitdirectory directory multiple class="hidden" />
           </div>
         </label>
+        <label class="flex items-center gap-2 surface-2 border rounded-xl p-2.5 cursor-pointer">
+          <input id="chkImportUnmatchedToInbox" type="checkbox" class="accent-[#e5b869] w-4 h-4 shrink-0" />
+          <span class="text-[11px] text-slate-300">Si el nombre no coincide con un tema existente, enviarlo a <strong>"Sin asignar"</strong> para routearlo manualmente.</span>
+        </label>
         <div id="batchImportFeedback" class="hidden bg-emerald-950/40 border border-emerald-500/35 text-emerald-200 rounded-xl p-3 text-xs"></div>
       </div>
-      <div class="flex justify-end pt-2">
+      <div class="flex items-center justify-between gap-2 pt-2">
+        <button id="btnJumpToRouting" class="px-3 py-2 rounded-xl bg-[#1e2432] hover:bg-[#272f42] border border-[#2d364a] text-sky-300 font-medium text-xs">Configurar / Routear PDFs</button>
         <button id="btnDoneFolderModal" class="px-4 py-2 rounded-xl bg-[#e5b869] text-[#11151d] font-semibold text-xs">Listo</button>
       </div>
     </div>
@@ -565,6 +608,128 @@
     </div>
   </div>
 
+  <!-- MODAL: ROUTEAR Y CONFIGURAR PDFs POR INSTRUMENTO -->
+  <div id="modalRouting" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="surface border rounded-2xl max-w-3xl w-full p-5 space-y-3.5 shadow-2xl max-h-[92vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-[#252d3d] pb-2.5">
+        <div>
+          <h3 class="font-semibold text-base text-slate-100">Configuración y Ruteo de PDFs por Instrumento</h3>
+          <p class="text-[11px] text-slate-400">Revisa todos los PDFs subidos, fíltralos por instrumento y asígnalos manualmente si el nombre no coincide.</p>
+        </div>
+        <button id="btnCloseRoutingModal" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+
+      <div id="routingInstrumentTabs" class="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scroll"></div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <input id="inputRoutingSearch" type="text" placeholder="Buscar archivo PDF o canción..." class="flex-1 min-w-[180px] surface-2 border rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#e5b869]" />
+        <label class="cursor-pointer px-3 py-1.5 rounded-xl bg-sky-500/15 hover:bg-sky-500/25 border border-sky-500/30 text-sky-200 text-xs font-medium transition">
+          + Subir PDFs a Sin asignar
+          <input id="inputRoutingUploadInbox" type="file" accept="application/pdf" multiple class="hidden" />
+        </label>
+        <button id="btnAutoMatchUnassigned" class="px-3 py-1.5 rounded-xl bg-[#1e2432] hover:bg-[#272f42] border border-[#2d364a] text-[#e5b869] text-xs font-medium transition">Auto-emparejar</button>
+      </div>
+
+      <div id="routingList" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scroll min-h-[240px]"></div>
+
+      <div class="flex items-center justify-between pt-1 border-t border-[#252d3d]">
+        <span id="routingSummaryText" class="text-[11px] text-slate-400"></span>
+        <button id="btnDoneRoutingModal" class="px-4 py-2 rounded-xl bg-[#e5b869] text-[#11151d] font-semibold text-xs">Listo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PARTITURAS DISPONIBLES EN EL MAESTRO (MÚSICO) -->
+  <div id="modalMusicianLibrary" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="surface border rounded-2xl max-w-2xl w-full p-5 space-y-3.5 shadow-2xl max-h-[92vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-[#252d3d] pb-2.5">
+        <div>
+          <h3 class="font-semibold text-base text-slate-100">Partituras en el Maestro — <span id="musicianLibInstTitle" class="text-[#e5b869]"></span></h3>
+          <p class="text-[11px] text-slate-400">Puedes ver los PDFs en línea desde el dispositivo Maestro o descargarlos a tu tablet para tocar sin conexión.</p>
+        </div>
+        <button id="btnCloseMusicianLibModal" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+
+      <div class="surface-2 border rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
+        <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-200">
+          <input id="chkAutoStreamPdf" type="checkbox" checked class="accent-[#e5b869] w-4 h-4" />
+          <span>Ver en línea automáticamente si falta el PDF local</span>
+        </label>
+        <button id="btnDownloadAllMyInstrument" class="px-3 py-1.5 rounded-xl bg-[#e5b869] hover:bg-[#ecc57e] text-[#11151d] text-xs font-semibold transition">Descargar todo mi atril</button>
+      </div>
+
+      <div id="musicianDownloadProgress" class="hidden surface-2 border border-sky-500/30 rounded-xl px-3 py-2 text-xs text-sky-200"></div>
+
+      <div id="musicianLibList" class="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scroll min-h-[240px]"></div>
+
+      <div class="flex justify-end pt-1">
+        <button id="btnDoneMusicianLibModal" class="px-4 py-2 rounded-xl bg-[#1e2432] hover:bg-[#272f42] text-white font-semibold text-xs">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LISTA BASE Y LIMPIAR SESIÓN -->
+  <div id="modalBaseList" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="surface border rounded-2xl max-w-2xl w-full p-5 space-y-4 shadow-2xl max-h-[92vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between border-b border-[#252d3d] pb-2.5">
+        <div>
+          <h3 class="font-semibold text-base text-slate-100">Lista Base y Nueva Sesión</h3>
+          <p class="text-[11px] text-slate-400">Crea tu repertorio guía para que al subir cualquier instrumento se empareje con estos temas, o limpia la sesión.</p>
+        </div>
+        <button id="btnCloseBaseListModal" class="text-slate-400 hover:text-white text-sm font-bold">✕</button>
+      </div>
+
+      <!-- Opción 1: Pegar texto -->
+      <div class="surface-2 border rounded-xl p-3 space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-semibold text-[#e5b869]">1. Pegar lista de canciones (1 por línea)</span>
+          <label class="flex items-center gap-1.5 text-[11px] text-slate-300 cursor-pointer">
+            <input id="chkBaseReplaceList" type="checkbox" checked class="accent-[#e5b869] w-3.5 h-3.5" />
+            <span>Reemplazar lista actual</span>
+          </label>
+        </div>
+        <textarea id="inputBaseListText" rows="5" placeholder="Pega desde WhatsApp, Notas o Excel (una por línea):&#10;Mi Princesa&#10;Súbete a la Nave | Merengue | Gm | 132&#10;3. La Pollera Colorá | Cumbia" class="w-full bg-[#181d27] border border-[#2d364a] rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#e5b869] font-mono"></textarea>
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-[10px] text-slate-400">Opcional: usa <code>Nombre | Género | Tono | BPM</code> o solo el nombre.</span>
+          <button id="btnApplyBaseListText" class="px-3 py-1.5 rounded-lg bg-[#e5b869] hover:bg-[#ecc57e] text-[#11151d] text-xs font-semibold transition">Crear lista desde texto</button>
+        </div>
+      </div>
+
+      <!-- Opción 2 y 3: Archivo TXT/CSV o desde PDFs guía -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <label class="cursor-pointer surface-2 border border-sky-500/30 hover:border-sky-400 rounded-xl p-3 space-y-1 transition block">
+          <div class="text-xs font-semibold text-sky-300">2. Importar archivo .TXT o .CSV</div>
+          <p class="text-[11px] text-slate-400">Lee listas exportadas de Excel, Google Sheets o Bloc de notas.</p>
+          <input id="inputBaseListFile" type="file" accept=".txt,.csv,text/plain,text/csv" class="hidden" />
+        </label>
+
+        <label class="cursor-pointer surface-2 border border-emerald-500/30 hover:border-emerald-400 rounded-xl p-3 space-y-1 transition block">
+          <div class="text-xs font-semibold text-emerald-300">3. Crear desde PDFs de 1 instrumento</div>
+          <p class="text-[11px] text-slate-400">Toma los nombres de una carpeta guía (ej. Trompeta 1) y los carga.</p>
+          <input id="inputBaseListFromPdfs" type="file" accept="application/pdf" multiple class="hidden" />
+        </label>
+      </div>
+
+      <div id="baseListFeedback" class="hidden bg-emerald-950/40 border border-emerald-500/35 text-emerald-200 rounded-xl p-2.5 text-xs"></div>
+
+      <!-- Respaldo y Limpiar sesión -->
+      <div class="surface-2 border border-rose-500/25 rounded-xl p-3 space-y-2.5">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <span class="text-xs font-semibold text-rose-300">Iniciar nueva sesión sin nada</span>
+          <button id="btnExportBaseListTxt" class="px-2.5 py-1 rounded-lg bg-[#1e2432] hover:bg-[#272f42] border border-[#2d364a] text-[11px] text-slate-200">Exportar lista (.txt)</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <button id="btnClearSongsOnly" class="py-2 px-3 rounded-xl bg-[#1e2432] hover:bg-rose-950/60 border border-[#2d364a] hover:border-rose-500/40 text-rose-200 text-xs font-medium transition">Limpiar solo canciones (0 temas)</button>
+          <button id="btnClearAllSession" class="py-2 px-3 rounded-xl bg-rose-950/50 hover:bg-rose-900/70 border border-rose-500/40 text-rose-200 text-xs font-semibold transition">Limpiar TODO (Canciones + PDFs)</button>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-1">
+        <button id="btnDoneBaseListModal" class="px-4 py-2 rounded-xl bg-[#1e2432] hover:bg-[#272f42] text-white font-semibold text-xs">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: GUÍA -->
   <div id="modalGuide" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="surface border rounded-2xl max-w-xl w-full p-5 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
@@ -692,6 +857,11 @@
       currentPage: 1,
       activeCue: '',
       uploadedPdfs: {},
+      onlineTempPdfs: {},
+      masterPdfCatalog: {},
+      autoStreamPdf: true,
+      routingFilterInst: 'Todos',
+      pendingPdfTransfers: {},
       pdfPages: {},
       remoteSongs: null,
       offlineRole: 'none',
@@ -796,6 +966,30 @@
       } catch (e) {}
     }
 
+    async function deletePdfFromDb(key) {
+      try {
+        const db = await openPdfDb();
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction('pdfs', 'readwrite');
+          tx.objectStore('pdfs').delete(key);
+          tx.oncomplete = resolve;
+          tx.onerror = () => reject(tx.error);
+        });
+      } catch (e) {}
+    }
+
+    async function clearAllPdfsFromDb() {
+      try {
+        const db = await openPdfDb();
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction('pdfs', 'readwrite');
+          tx.objectStore('pdfs').clear();
+          tx.oncomplete = resolve;
+          tx.onerror = () => reject(tx.error);
+        });
+      } catch (e) {}
+    }
+
     async function restorePdfsFromDb() {
       try {
         const db = await openPdfDb();
@@ -825,13 +1019,24 @@
       }
     } catch (e) {}
 
+    function buildMasterPdfCatalog() {
+      const cat = {};
+      Object.keys(state.uploadedPdfs).forEach((k) => {
+        if (k.startsWith('__UNASSIGNED__|')) return;
+        const f = state.uploadedPdfs[k];
+        if (f) cat[k] = { name: f.name, size: f.size || 0 };
+      });
+      return cat;
+    }
+
     function buildMasterPayload() {
       return {
         type: 'MASTER_STATE_UPDATE',
         songIndex: state.currentSongIndex,
         page: state.currentPage,
         cue: state.activeCue,
-        songs: getActiveSongs().map((s) => ({ code: s.code, title: s.title, key: s.key, bpm: s.bpm, pages: s.pages })),
+        songs: getActiveSongs().map((s) => ({ code: s.code, title: s.title, key: s.key, bpm: s.bpm, pages: s.pages, genre: s.genre || 'Sin género' })),
+        pdfCatalog: buildMasterPdfCatalog(),
         ts: Date.now()
       };
     }
@@ -840,8 +1045,12 @@
       if (getRole() === 'musician' && Array.isArray(msg.songs) && msg.songs.length) {
         state.remoteSongs = msg.songs.map((s) => ({
           id: 'r_' + s.code, code: String(s.code), title: String(s.title || s.code),
-          key: String(s.key || ''), bpm: Number(s.bpm) || 120, pages: Number(s.pages) || 1
+          key: String(s.key || ''), bpm: Number(s.bpm) || 120, pages: Number(s.pages) || 1,
+          genre: String(s.genre || 'Sin género')
         }));
+      }
+      if (getRole() === 'musician' && msg.pdfCatalog && typeof msg.pdfCatalog === 'object') {
+        state.masterPdfCatalog = msg.pdfCatalog;
       }
       const songs = getActiveSongs();
       if (typeof msg.songIndex === 'number' && songs[msg.songIndex]) state.currentSongIndex = msg.songIndex;
@@ -849,6 +1058,115 @@
       state.activeCue = msg.cue || '';
       if (getRole() !== 'musician') saveAppState();
       renderAll();
+    }
+
+    /* ============ TRANSFERENCIA DE PDFs (VER EN LÍNEA / DESCARGAR) ============ */
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      let binary = '';
+      const step = 0x8000;
+      for (let i = 0; i < bytes.length; i += step) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + step));
+      }
+      return btoa(binary);
+    }
+
+    function base64ToUint8Array(b64) {
+      const bin = atob(b64);
+      const len = bin.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
+
+    async function handleMasterPdfRequest(req, sendFn) {
+      const file = state.uploadedPdfs[req.key];
+      if (!file) {
+        sendFn({ type: 'PDF_ERROR', reqId: req.reqId, key: req.key, error: 'El Maestro no tiene este PDF cargado.' });
+        return;
+      }
+      try {
+        const buf = await file.arrayBuffer();
+        const CHUNK = 24576;
+        const totalChunks = Math.max(1, Math.ceil(buf.byteLength / CHUNK));
+        sendFn({ type: 'PDF_START', reqId: req.reqId, key: req.key, name: file.name, size: buf.byteLength, totalChunks });
+        for (let idx = 0; idx < totalChunks; idx++) {
+          const slice = buf.slice(idx * CHUNK, (idx + 1) * CHUNK);
+          sendFn({ type: 'PDF_CHUNK', reqId: req.reqId, idx, data: arrayBufferToBase64(slice) });
+          await sleep(12);
+        }
+        sendFn({ type: 'PDF_END', reqId: req.reqId, key: req.key });
+      } catch (e) {
+        sendFn({ type: 'PDF_ERROR', reqId: req.reqId, key: req.key, error: 'Error al leer PDF en Maestro.' });
+      }
+    }
+
+    function handleIncomingPdfTransferMsg(msg) {
+      const t = state.pendingPdfTransfers[msg.reqId];
+      if (!t) return;
+      if (msg.type === 'PDF_START') {
+        t.name = msg.name || 'partitura.pdf';
+        t.totalChunks = msg.totalChunks || 1;
+        t.chunks = new Array(t.totalChunks);
+        t.received = 0;
+        if (t.onProgress) t.onProgress(0, t.totalChunks);
+      } else if (msg.type === 'PDF_CHUNK') {
+        if (t.chunks && typeof msg.idx === 'number' && !t.chunks[msg.idx]) {
+          t.chunks[msg.idx] = base64ToUint8Array(msg.data);
+          t.received++;
+          if (t.onProgress) t.onProgress(t.received, t.totalChunks);
+        }
+      } else if (msg.type === 'PDF_END') {
+        clearTimeout(t.timeout);
+        delete state.pendingPdfTransfers[msg.reqId];
+        const totalBytes = (t.chunks || []).reduce((acc, c) => acc + (c ? c.length : 0), 0);
+        const merged = new Uint8Array(totalBytes);
+        let offset = 0;
+        (t.chunks || []).forEach((c) => { if (c) { merged.set(c, offset); offset += c.length; } });
+        const file = new File([merged], t.name || 'partitura.pdf', { type: 'application/pdf' });
+        if (t.mode === 'download') {
+          state.uploadedPdfs[t.key] = file;
+          delete state.pdfPages[t.key];
+          persistPdfToDb(t.key, file);
+        } else {
+          state.onlineTempPdfs[t.key] = file;
+          delete state.pdfPages[t.key];
+        }
+        t.resolve(file);
+        renderAll();
+      } else if (msg.type === 'PDF_ERROR') {
+        clearTimeout(t.timeout);
+        delete state.pendingPdfTransfers[msg.reqId];
+        t.reject(new Error(msg.error || 'Error de transferencia'));
+      }
+    }
+
+    function requestPdfFromMaster(key, mode, onProgress) {
+      const existing = Object.values(state.pendingPdfTransfers).find((t) => t.key === key && t.mode === mode);
+      if (existing) return existing.promise;
+
+      const reqId = 'req_' + Date.now() + '_' + Math.random().toString(16).slice(2, 7);
+      let resolveFn, rejectFn;
+      const promise = new Promise((res, rej) => { resolveFn = res; rejectFn = rej; });
+      const timeout = setTimeout(() => {
+        if (state.pendingPdfTransfers[reqId]) {
+          delete state.pendingPdfTransfers[reqId];
+          rejectFn(new Error('Tiempo de espera agotado al pedir PDF al Maestro.'));
+        }
+      }, 30000);
+
+      state.pendingPdfTransfers[reqId] = { reqId, key, mode, onProgress, resolve: resolveFn, reject: rejectFn, timeout, promise };
+
+      if (state.offlineRole === 'musician' && state.musicianDc && state.musicianDc.readyState === 'open') {
+        try { state.musicianDc.send(JSON.stringify({ type: 'REQ_PDF', reqId, key, mode })); } catch (e) { rejectFn(e); }
+      } else if (state.onlineRole === 'musician' && MQ.join && MQ.join.client.connected) {
+        try { MQ.join.client.publish(MQ.join.base + '/req', JSON.stringify({ type: 'REQ_PDF', reqId, key, mode, clientId: MQ.join.cid }), { qos: 1 }); } catch (e) { rejectFn(e); }
+      } else {
+        clearTimeout(timeout);
+        delete state.pendingPdfTransfers[reqId];
+        rejectFn(new Error('No estás conectado a un Maestro.'));
+      }
+      return promise;
     }
 
     function broadcastMasterSignal() {
@@ -1097,6 +1415,11 @@
         try {
           const m = JSON.parse(ev.data);
           if (m && m.type === 'HELLO') { peer.instrument = m.instrument || ''; updateOfflineStatus(); }
+          if (m && m.type === 'REQ_PDF') {
+            handleMasterPdfRequest(m, (out) => {
+              if (dc && dc.readyState === 'open') { try { dc.send(JSON.stringify(out)); } catch (e) {} }
+            });
+          }
         } catch (e) {}
       };
       dc.onclose = () => {
@@ -1183,6 +1506,9 @@
             try {
               const data = JSON.parse(msgEv.data);
               if (data && data.type === 'MASTER_STATE_UPDATE') applyMasterState(data);
+              if (data && (data.type === 'PDF_START' || data.type === 'PDF_CHUNK' || data.type === 'PDF_END' || data.type === 'PDF_ERROR')) {
+                handleIncomingPdfTransferMsg(data);
+              }
             } catch (e) {}
           };
           dc.onclose = () => {
@@ -1346,12 +1672,24 @@
         MQ.host = { client, id, name: nameRaw, section, lock: !!pin, base, owner: client.options.clientId };
         MQ.presence = {};
         client.on('message', (t, p) => {
+          if (t === base + '/req') {
+            try {
+              const req = JSON.parse(p.toString());
+              if (req && req.type === 'REQ_PDF' && req.clientId) {
+                handleMasterPdfRequest(req, (out) => {
+                  if (client.connected) { try { client.publish(base + '/pdf/' + req.clientId, JSON.stringify(out), { qos: 1 }); } catch (e) {} }
+                });
+              }
+            } catch (e) {}
+            return;
+          }
           if (t.indexOf(base + '/presence/') !== 0) return;
           const cid = t.split('/').pop(); const txt = p.toString();
           if (!txt) delete MQ.presence[cid]; else { try { MQ.presence[cid] = JSON.parse(txt); } catch (e) {} }
           updateHostInfo(); updateConnBadge();
         });
         client.subscribe(base + '/presence/+');
+        client.subscribe(base + '/req');
         client.on('connect', () => { mqPublishDir(); mqPublishState(); });
         mqPublishDir(); mqPublishState();
         clearInterval(MQ.hb); MQ.hb = setInterval(mqPublishDir, 12000);
@@ -1379,11 +1717,16 @@
         const { client } = await mqConnect({ clientId: cid, will: { topic: base + '/presence/' + cid, payload: '', qos: 0, retain: true } });
         MQ.join = { client, id, name: room.name, base, cid, got: false };
         client.on('message', (t, p) => {
+          if (t === base + '/pdf/' + cid) {
+            try { handleIncomingPdfTransferMsg(JSON.parse(p.toString())); } catch (e) {}
+            return;
+          }
           if (t !== base + '/state') return;
           const txt = p.toString(); if (!txt) return;
           try { const d = JSON.parse(txt); if (MQ.join) MQ.join.got = true; applyMasterState(d); updateJoinInfo(); } catch (e) {}
         });
         client.subscribe(base + '/state', { qos: 1 });
+        client.subscribe(base + '/pdf/' + cid, { qos: 1 });
         client.on('connect', () => { mqUpdatePresence(); });
         mqUpdatePresence();
         state.onlineRole = 'musician';
@@ -1403,7 +1746,10 @@
     /* ============ VISOR / PDF + ZOOM ============ */
     function getExpectedPdfFilename(song, instrument) {
       const key = `${song.code}|${instrument}`;
-      return state.uploadedPdfs[key] ? state.uploadedPdfs[key].name : `${song.code} - ${instrument}.pdf`;
+      if (state.uploadedPdfs[key]) return 'Local ✓ · ' + state.uploadedPdfs[key].name;
+      if (state.onlineTempPdfs[key]) return 'En línea · ' + state.onlineTempPdfs[key].name;
+      if (state.masterPdfCatalog[key]) return 'En Maestro · ' + state.masterPdfCatalog[key].name;
+      return `${song.code} - ${instrument}.pdf`;
     }
 
     function buildScoreSvg(song, instrument, page) {
@@ -1459,7 +1805,7 @@
     async function renderActualPdfIfUploaded(song, instrument, pageNum) {
       const seq = ++pdfRenderSeq;
       const key = `${song.code}|${instrument}`;
-      const pdfFile = state.uploadedPdfs[key];
+      const pdfFile = state.uploadedPdfs[key] || state.onlineTempPdfs[key];
       const canvas = $('pdfRenderCanvas');
       const syntheticCard = $('syntheticScoreCard');
 
@@ -1574,6 +1920,10 @@
       const songs = getActiveSongs();
       const query = state.searchQuery.trim().toLowerCase();
       container.innerHTML = '';
+      if (!songs.length) {
+        container.innerHTML = '<div class="surface-2 border border-dashed rounded-xl p-4 text-center text-xs text-slate-400">Repertorio vacío.<br><span class="text-slate-500">Usa <strong>Lista / Limpiar</strong> para pegar tu lista base o sube PDFs.</span></div>';
+        return;
+      }
       songs.forEach((song, idx) => {
         const songGenre = song.genre || 'Sin género';
         const genreOk = state.selectedGenre === 'Todos' || songGenre === state.selectedGenre;
@@ -1596,14 +1946,13 @@
             </div>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
-            <span class="text-[10px] font-medium px-2 py-1 rounded-lg ${isSelected ? 'bg-emerald-500/20 text-emerald-300' : 'bg-[#222938] text-slate-400'}">${isSelected ? 'Activa' : 'Abrir'}</span>
+            <span class="text-[10px] font-medium px-2 py-1 rounded-lg ${state.uploadedPdfs[song.code + '|' + state.myInstrument] ? 'bg-emerald-500/20 text-emerald-300' : (state.onlineTempPdfs[song.code + '|' + state.myInstrument] ? 'bg-sky-500/20 text-sky-300' : (state.masterPdfCatalog[song.code + '|' + state.myInstrument] ? 'bg-[#e5b869]/20 text-[#e5b869]' : 'bg-[#222938] text-slate-400'))}">${state.uploadedPdfs[song.code + '|' + state.myInstrument] ? 'PDF ✓' : (state.onlineTempPdfs[song.code + '|' + state.myInstrument] ? 'En línea' : (state.masterPdfCatalog[song.code + '|' + state.myInstrument] ? 'En Maestro' : (isSelected ? 'Activa' : 'Sin PDF')))}</span>
             <span role="button" tabindex="0" title="Eliminar canción" class="btn-del-song px-1.5 py-1 rounded-lg bg-[#181d27] hover:bg-rose-950/70 text-slate-400 hover:text-rose-300 text-[11px] font-bold">✕</span>
           </div>
         `;
         const delBtn = item.querySelector('.btn-del-song');
         delBtn.addEventListener('click', (ev) => {
           ev.stopPropagation();
-          if (songs.length <= 1) return;
           songs.splice(idx, 1);
           if (state.currentSongIndex >= songs.length) state.currentSongIndex = Math.max(0, songs.length - 1);
           state.currentPage = 1;
@@ -1626,7 +1975,22 @@
       const songs = getActiveSongs();
       if (state.currentSongIndex >= songs.length) state.currentSongIndex = Math.max(0, songs.length - 1);
       const song = songs[state.currentSongIndex];
-      if (!song) return;
+      if (!song) {
+        $('liveSignalText').textContent = 'Sin canciones';
+        $('viewerInstrumentTag').textContent = state.myInstrument;
+        $('viewerSongTitle').textContent = 'Repertorio vacío';
+        $('viewerFileName').textContent = 'Usa "Lista / Limpiar" o "Cargar PDFs"';
+        $('pdfRenderCanvas').classList.add('hidden');
+        $('syntheticScoreCard').classList.remove('hidden');
+        $('scoreHeaderPart').textContent = `ATRIL: ${state.myInstrument.toUpperCase()}`;
+        $('scoreHeaderTitle').textContent = 'Sesión en blanco';
+        $('scoreHeaderMeta').textContent = '0 canciones cargadas';
+        $('scoreHeaderFile').textContent = '';
+        $('scorePartNotes').textContent = 'Importa tu lista base o sube tus partituras PDF para comenzar.';
+        $('scoreSvgWrapper').innerHTML = '';
+        $('remotePdfBar').classList.add('hidden');
+        return;
+      }
 
       const instrument = state.myInstrument;
       const details = INSTRUMENT_PART_DETAILS[instrument] || INSTRUMENT_PART_DETAILS['Trompeta 1'];
@@ -1660,6 +2024,37 @@
         cueBanner.classList.remove('hidden');
       } else {
         cueBanner.classList.add('hidden');
+      }
+
+      const remoteBar = $('remotePdfBar');
+      const curKey = `${song.code}|${instrument}`;
+      const hasLocal = !!state.uploadedPdfs[curKey];
+      const hasTemp = !!state.onlineTempPdfs[curKey];
+      const masterMeta = state.masterPdfCatalog[curKey];
+      const isConnectedMusician = getRole() === 'musician' && (state.offlineRole === 'musician' || state.onlineRole === 'musician');
+
+      if (!state.zenMode && isConnectedMusician && !hasLocal && masterMeta) {
+        const kb = Math.max(1, Math.round((masterMeta.size || 0) / 1024));
+        $('remotePdfInfoText').textContent = hasTemp
+          ? `Viendo en línea: ${masterMeta.name} (${kb} KB)`
+          : `Disponible en Maestro: ${masterMeta.name} (${kb} KB)`;
+        $('btnRemoteViewPdf').classList.toggle('hidden', hasTemp);
+        remoteBar.classList.remove('hidden');
+
+        if (!hasTemp && state.autoStreamPdf) {
+          const prog = $('remotePdfProgress');
+          prog.textContent = 'Cargando...';
+          prog.classList.remove('hidden');
+          requestPdfFromMaster(curKey, 'view', (rx, tot) => {
+            prog.textContent = `${Math.round((rx / tot) * 100)}%`;
+          }).then(() => {
+            prog.classList.add('hidden');
+          }).catch(() => {
+            prog.classList.add('hidden');
+          });
+        }
+      } else {
+        remoteBar.classList.add('hidden');
       }
 
       if (state.metronomeOn && state.metronomeSong !== song.code) { stopMetronome(); startMetronome(); }
@@ -1762,6 +2157,7 @@
         multiTabletSection.classList.remove('hidden');
         btnOpenConnModal.classList.remove('hidden');
         connBadge.classList.remove('hidden');
+        $('btnOpenMusicianLibrary').classList.add('hidden');
         masterCueBox.classList.remove('hidden');
         panelMasterSubtitle.textContent = 'Control Maestro';
         transportTitle.textContent = 'Control Remoto';
@@ -1773,6 +2169,7 @@
         multiTabletSection.classList.add('hidden');
         btnOpenConnModal.classList.remove('hidden');
         connBadge.classList.remove('hidden');
+        $('btnOpenMusicianLibrary').classList.remove('hidden');
       } else {
         roleBadge.textContent = 'Modo Solo';
         roleBadge.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-500/30';
@@ -1781,6 +2178,7 @@
         multiTabletSection.classList.add('hidden');
         btnOpenConnModal.classList.add('hidden');
         connBadge.classList.add('hidden');
+        $('btnOpenMusicianLibrary').classList.add('hidden');
         masterCueBox.classList.add('hidden');
         panelMasterSubtitle.textContent = 'Modo Solo';
         transportTitle.textContent = 'Navegación Local';
@@ -2060,18 +2458,21 @@
       $('btnCloseFolderModal').addEventListener('click', () => modalFolder.classList.add('hidden'));
       $('btnDoneFolderModal').addEventListener('click', () => modalFolder.classList.add('hidden'));
 
+      function normSongKey(str) {
+        return String(str || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+      }
+
       function matchInstrumentAlias(raw) {
-        const norm = String(raw || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+        const norm = normSongKey(raw);
         if (!norm) return null;
         for (const inst of INSTRUMENTS) {
-          const instNorm = inst.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
-          if (norm === instNorm) return inst;
+          if (norm === normSongKey(inst)) return inst;
         }
-        if (/^(tpt|tp|trompeta)1$/.test(norm)) return 'Trompeta 1';
-        if (/^(tpt|tp|trompeta)2$/.test(norm)) return 'Trompeta 2';
-        if (/^(tpt|tp|trompeta)3$/.test(norm)) return 'Trompeta 3';
-        if (/^(sax|saxo|saxofon)alto$/.test(norm)) return 'Saxo Alto';
-        if (/^(sax|saxo|saxofon)tenor$/.test(norm)) return 'Saxo Tenor';
+        if (/^(?:tpt|tp|tromp|trompeta|1ra|primera)*(?:1|i)$/.test(norm) && /tpt|tp|tromp|primera|1ra/.test(norm)) return 'Trompeta 1';
+        if (/^(?:tpt|tp|tromp|trompeta|2da|segunda)*(?:2|ii)$/.test(norm) && /tpt|tp|tromp|segunda|2da/.test(norm)) return 'Trompeta 2';
+        if (/^(?:tpt|tp|tromp|trompeta|3ra|tercera)*(?:3|iii)$/.test(norm) && /tpt|tp|tromp|tercera|3ra/.test(norm)) return 'Trompeta 3';
+        if (/^(?:sax|saxo|saxofon|altosax|sax1)$/.test(norm) || /^(?:sax|saxo|saxofon)alto$/.test(norm) || /^altosax(?:o|ofon)?$/.test(norm)) return 'Saxo Alto';
+        if (/^(?:sax|saxo|saxofon)tenor$/.test(norm) || /^tenorsax(?:o|ofon)?$/.test(norm) || norm === 'sax2') return 'Saxo Tenor';
         if (/^(piano|teclado|keys)$/.test(norm)) return 'Piano';
         if (/^(bajo|bass)$/.test(norm)) return 'Bajo';
         if (/^(guitarra|guitar|gtr)$/.test(norm)) return 'Guitarra';
@@ -2079,37 +2480,131 @@
         return null;
       }
 
+      function cleanSongTitle(raw) {
+        let s = String(raw || '').replace(/\.pdf$/i, '').trim();
+        // Remove duplicate markers like (1), (2), (copia), [1]
+        s = s.replace(/\s*[\(\[]\s*(?:\d+|copia|copy)\s*[\)\]]\s*$/gi, '').trim();
+        // Remove band/year noise inside parentheses or trailing tags
+        s = s.replace(/\s*\(\s*(?:tripu|tripulacion|tripulación|nenes|20\d{2})\s*\)/gi, ' ');
+        s = s.replace(/\s+(?:tripu|tripulacion|tripulación|nenes)(?:\s+20\d{2})?\s*$/gi, '');
+        // Clean leading/trailing separators and collapse whitespace
+        s = s.replace(/^[\s,._\-]+|[\s,._\-]+$/g, '').replace(/\s{2,}/g, ' ').trim();
+        // Capitalize first letter if completely lowercase
+        if (s && s === s.toLowerCase()) {
+          s = s.replace(/(^|\s)([a-záéíóúñ])/g, (_, sp, ch) => sp + ch.toUpperCase());
+        }
+        return s || 'Sin Título';
+      }
+
+      function parseSongAndInstrument(filename, relativePath) {
+        let clean = String(filename || '').replace(/\.pdf$/i, '').trim();
+        // Strip duplicate suffix like " (1)" before parsing instrument
+        clean = clean.replace(/\s*[\(\[]\s*(?:\d+|copia|copy)\s*[\)\]]\s*$/gi, '').trim();
+        let detectedInst = null;
+
+        // 0. Check folder path if uploaded as directory (e.g. "Trompeta 3/pajarito.pdf" or "Sax Alto/Lloraras.pdf")
+        let folderInst = null;
+        if (relativePath && relativePath.includes('/')) {
+          const dirs = relativePath.split('/').slice(0, -1);
+          for (let i = dirs.length - 1; i >= 0; i--) {
+            const cand = matchInstrumentAlias(dirs[i]);
+            if (cand) { folderInst = cand; break; }
+          }
+        }
+
+        // 1. Trailing parentheses e.g. "Mi Princesa (Trompeta 2)" or "LA CANOA RACHA ( SAX ALTO ) ( tripu)"
+        const parenMatches = clean.match(/\(([^)]+)\)/g);
+        if (parenMatches) {
+          for (let i = parenMatches.length - 1; i >= 0; i--) {
+            const inner = parenMatches[i].slice(1, -1);
+            const cand = matchInstrumentAlias(inner);
+            if (cand) {
+              detectedInst = cand;
+              clean = clean.replace(parenMatches[i], ' ').trim();
+              break;
+            }
+          }
+        }
+
+        // 2. Trailing separator (-, _, ,, .) e.g. "Lloraras, Trompeta 1" or "pajarito. Trompeta 3" or "Cumande Mix - Trompeta 3"
+        if (!detectedInst) {
+          const endMatch = clean.match(/^(.+?)[\s]*[-_,\.][\s]*([^-_,\.]+)$/);
+          if (endMatch) {
+            const cand = matchInstrumentAlias(endMatch[2]);
+            if (cand) { clean = endMatch[1].trim(); detectedInst = cand; }
+          }
+        }
+
+        // 3. Leading separator (-, _, ,, .) e.g. "Trompeta 2 - Mi Princesa"
+        if (!detectedInst) {
+          const startMatch = clean.match(/^([^-_,\.]+)[\s]*[-_,\.][\s]*(.+)$/);
+          if (startMatch) {
+            const cand = matchInstrumentAlias(startMatch[1]);
+            if (cand) { clean = startMatch[2].trim(); detectedInst = cand; }
+          }
+        }
+
+        // 4. Inline instrument at end without separator e.g. "Tu amor y valio la pena Sax alto" or "pajarito Trompeta 3"
+        if (!detectedInst) {
+          const inlineMatch = clean.match(/^(.+?)\s+((?:trompeta|tpt|tp)\s*[123i]{1,3}|(?:saxo?|saxof[oó]n)\s*(?:alto|tenor)|piano|teclado|bajo|guitarra|percusi[oó]n)(?:\s+(?:tripu|tripulaci[oó]n|20\d{2}))*$/i);
+          if (inlineMatch) {
+            const cand = matchInstrumentAlias(inlineMatch[2]);
+            if (cand) { clean = inlineMatch[1].trim(); detectedInst = cand; }
+          }
+        }
+
+        const songCode = cleanSongTitle(clean);
+        const finalDetected = detectedInst || folderInst;
+        const standardizedName = finalDetected ? `${songCode} - ${finalDetected}.pdf` : `${songCode}.pdf`;
+        return { songCode, detectedInst: finalDetected, standardizedName };
+      }
+
+      function findMatchingSong(songsList, songCode) {
+        const normTarget = normSongKey(songCode);
+        if (!normTarget) return null;
+        let match = songsList.find((s) => normSongKey(s.code) === normTarget || normSongKey(s.title) === normTarget);
+        if (!match && normTarget.length >= 4) {
+          const fuzzy = songsList.filter((s) => {
+            const nc = normSongKey(s.code);
+            return nc.length >= 4 && (nc.includes(normTarget) || normTarget.includes(nc));
+          });
+          if (fuzzy.length === 1) match = fuzzy[0];
+        }
+        return match || null;
+      }
+
       const handleBatchImport = (e) => {
         const files = Array.from(e.target.files || []).filter((f) => f.name.toLowerCase().endsWith('.pdf')); if (!files.length) return;
+        const batchMode = $('selectBatchInstrument') ? $('selectBatchInstrument').value : 'AUTO';
         let matched = 0;
         const localScene = state.scenes.find((s) => s.id === state.currentSceneId) || state.scenes[0];
         const songs = localScene.songs;
+        const activeSongs = getActiveSongs();
+
         files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).forEach((file) => {
-          const cleanName = file.name.replace(/\.pdf$/i, '').trim();
-          let songCode = cleanName;
-          let matchedInst = null;
+          const { songCode, detectedInst } = parseSongAndInstrument(file.name, file.webkitRelativePath || '');
+          const finalInst = (batchMode !== 'AUTO') ? batchMode : (detectedInst || state.myInstrument);
+          const stdName = `${songCode} - ${finalInst}.pdf`;
+          const stdFile = (file.name === stdName) ? file : new File([file], stdName, { type: 'application/pdf' });
 
-          const sepMatch = cleanName.match(/^(.+?)(?:\s*-\s*|\s*_\s*)([^-_]+)$/);
-          if (sepMatch && sepMatch[1] && sepMatch[2]) {
-            const candidateInst = matchInstrumentAlias(sepMatch[2]);
-            if (candidateInst) {
-              songCode = sepMatch[1].trim();
-              matchedInst = candidateInst;
+          const toInbox = $('chkImportUnmatchedToInbox') && $('chkImportUnmatchedToInbox').checked;
+          let songObj = findMatchingSong(activeSongs, songCode) || findMatchingSong(songs, songCode);
+          let key;
+          if (!songObj && toInbox) {
+            key = `__UNASSIGNED__|${finalInst}|${Date.now()}_${Math.floor(Math.random() * 1e5)}`;
+          } else {
+            if (!songObj) {
+              songObj = { id: 's_' + Date.now() + '_' + Math.floor(Math.random() * 1e6), code: songCode, title: songCode, key: 'Do Mayor', bpm: 120, pages: 2, genre: detectGenreFromName(songCode) };
+              songs.push(songObj);
             }
+            key = `${songObj.code}|${finalInst}`;
           }
-
-          const finalInst = matchedInst || state.myInstrument;
-          let songObj = songs.find((s) => s.code.toLowerCase() === songCode.toLowerCase());
-          if (!songObj) {
-            songObj = { id: 's_' + Date.now() + '_' + Math.floor(Math.random() * 1e6), code: songCode, title: songCode, key: 'Do Mayor', bpm: 120, pages: 2, genre: detectGenreFromName(songCode) };
-            songs.push(songObj);
-          }
-          const key = `${songObj.code}|${finalInst}`;
-          state.uploadedPdfs[key] = file; delete state.pdfPages[key]; persistPdfToDb(key, file); matched++;
+          state.uploadedPdfs[key] = stdFile; delete state.pdfPages[key]; persistPdfToDb(key, stdFile); matched++;
         });
         e.target.value = ''; saveAppState();
         const fb = $('batchImportFeedback');
-        fb.textContent = `Se guardaron ${matched} PDFs (${songs.length} temas en la lista).`;
+        const instLabel = batchMode !== 'AUTO' ? batchMode : 'detección y limpieza automática';
+        fb.textContent = `Se normalizaron y guardaron ${matched} PDFs (${instLabel}) con formato "Canción - Instrumento.pdf" • ${songs.length} temas en la lista.`;
         fb.classList.remove('hidden');
         if (isMasterControl()) broadcastMasterSignal();
         renderAll();
@@ -2236,6 +2731,457 @@
       $('btnOpenGuideModal').addEventListener('click', () => modalGuide.classList.remove('hidden'));
       $('btnCloseGuideModal').addEventListener('click', () => modalGuide.classList.add('hidden'));
       $('btnDoneGuideModal').addEventListener('click', () => modalGuide.classList.add('hidden'));
+
+      // ===== REMOTE PDF BAR (VER EN LÍNEA / DESCARGAR) =====
+      $('btnRemoteViewPdf').addEventListener('click', () => {
+        const song = getActiveSongs()[state.currentSongIndex];
+        if (!song) return;
+        const key = `${song.code}|${state.myInstrument}`;
+        const prog = $('remotePdfProgress');
+        prog.textContent = '0%'; prog.classList.remove('hidden');
+        requestPdfFromMaster(key, 'view', (rx, tot) => {
+          prog.textContent = `${Math.round((rx / tot) * 100)}%`;
+        }).then(() => { prog.classList.add('hidden'); }).catch((err) => {
+          prog.textContent = err.message || 'Error';
+        });
+      });
+
+      $('btnRemoteDownloadPdf').addEventListener('click', () => {
+        const song = getActiveSongs()[state.currentSongIndex];
+        if (!song) return;
+        const key = `${song.code}|${state.myInstrument}`;
+        const prog = $('remotePdfProgress');
+        prog.textContent = '0%'; prog.classList.remove('hidden');
+        requestPdfFromMaster(key, 'download', (rx, tot) => {
+          prog.textContent = `${Math.round((rx / tot) * 100)}%`;
+        }).then(() => { prog.classList.add('hidden'); }).catch((err) => {
+          prog.textContent = err.message || 'Error';
+        });
+      });
+
+      // ===== MODAL: ROUTEAR PDFs POR INSTRUMENTO =====
+      const modalRouting = $('modalRouting');
+      const renderRoutingModal = () => {
+        const tabsEl = $('routingInstrumentTabs');
+        const listEl = $('routingList');
+        const q = $('inputRoutingSearch').value.trim().toLowerCase();
+        const allKeys = Object.keys(state.uploadedPdfs);
+        const songs = getActiveSongs();
+
+        const counts = { Todos: allKeys.length, 'Sin asignar': 0 };
+        INSTRUMENTS.forEach((inst) => { counts[inst] = 0; });
+        allKeys.forEach((k) => {
+          if (k.startsWith('__UNASSIGNED__|')) {
+            counts['Sin asignar']++;
+          } else {
+            const inst = k.split('|')[1];
+            if (counts[inst] !== undefined) counts[inst]++;
+          }
+        });
+
+        tabsEl.innerHTML = '';
+        ['Todos', ...INSTRUMENTS, 'Sin asignar'].forEach((tab) => {
+          const active = state.routingFilterInst === tab;
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap border transition ${
+            active ? 'bg-[#e5b869] text-[#11151d] border-[#e5b869] font-semibold' : 'surface-2 text-slate-300 border-[#2d364a] hover:border-slate-500'
+          }`;
+          btn.textContent = `${tab} (${counts[tab] || 0})`;
+          btn.addEventListener('click', () => { state.routingFilterInst = tab; renderRoutingModal(); });
+          tabsEl.appendChild(btn);
+        });
+
+        listEl.innerHTML = '';
+        let shown = 0;
+        allKeys.sort((a, b) => {
+          const fa = state.uploadedPdfs[a]?.name || '';
+          const fb = state.uploadedPdfs[b]?.name || '';
+          return fa.localeCompare(fb, undefined, { numeric: true });
+        }).forEach((oldKey) => {
+          const file = state.uploadedPdfs[oldKey];
+          if (!file) return;
+          const isUnassigned = oldKey.startsWith('__UNASSIGNED__|');
+          const parts = oldKey.split('|');
+          const curSongCode = isUnassigned ? '' : parts[0];
+          const curInst = isUnassigned ? (parts[1] || state.myInstrument) : (parts[1] || state.myInstrument);
+
+          if (state.routingFilterInst === 'Sin asignar' && !isUnassigned) return;
+          if (state.routingFilterInst !== 'Todos' && state.routingFilterInst !== 'Sin asignar' && (isUnassigned || curInst !== state.routingFilterInst)) return;
+          if (q && !file.name.toLowerCase().includes(q) && !curSongCode.toLowerCase().includes(q)) return;
+
+          shown++;
+          const kb = Math.max(1, Math.round((file.size || 0) / 1024));
+          const row = document.createElement('div');
+          row.className = 'surface-2 border rounded-xl p-2.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2';
+
+          const instOpts = INSTRUMENTS.map((inst) => `<option value="${esc(inst)}" ${curInst === inst ? 'selected' : ''}>${esc(inst)}</option>`).join('');
+          const songOpts = [`<option value="__UNASSIGNED__" ${isUnassigned ? 'selected' : ''}>-- Sin asignar --</option>`]
+            .concat(songs.map((s) => `<option value="${esc(s.code)}" ${!isUnassigned && curSongCode === s.code ? 'selected' : ''}>${esc(s.code)} — ${esc(s.title)}</option>`))
+            .join('');
+
+          row.innerHTML = `
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-medium text-slate-100 truncate">${esc(file.name)}</div>
+              <div class="text-[10px] text-slate-400">${kb} KB • ${isUnassigned ? '<span class="text-amber-300">Sin asignar</span>' : esc(curSongCode + ' · ' + curInst)}</div>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 shrink-0">
+              <select class="sel-route-inst bg-[#181d27] border border-[#2d364a] rounded-lg px-2 py-1 text-[11px] text-[#e5b869]">${instOpts}</select>
+              <select class="sel-route-song bg-[#181d27] border border-[#2d364a] rounded-lg px-2 py-1 text-[11px] text-sky-200 max-w-[180px]">${songOpts}</select>
+              <button type="button" class="btn-route-view px-2 py-1 rounded-lg bg-[#1e2432] hover:bg-[#272f42] text-[11px] text-slate-200">Ver</button>
+              <button type="button" class="btn-route-del px-2 py-1 rounded-lg bg-[#1e2432] hover:bg-rose-950/70 text-[11px] text-rose-300 font-bold">✕</button>
+            </div>
+          `;
+
+          const reassign = () => {
+            const newInst = row.querySelector('.sel-route-inst').value;
+            const newSong = row.querySelector('.sel-route-song').value;
+            const newKey = newSong === '__UNASSIGNED__'
+              ? `__UNASSIGNED__|${newInst}|${Date.now()}_${Math.floor(Math.random() * 1e4)}`
+              : `${newSong}|${newInst}`;
+            if (newKey === oldKey) return;
+            delete state.uploadedPdfs[oldKey];
+            delete state.pdfPages[oldKey];
+            delete pdfDocCache[oldKey];
+            deletePdfFromDb(oldKey);
+            state.uploadedPdfs[newKey] = file;
+            persistPdfToDb(newKey, file);
+            if (isMasterControl()) broadcastMasterSignal();
+            renderRoutingModal();
+            renderAll();
+          };
+
+          row.querySelector('.sel-route-inst').addEventListener('change', reassign);
+          row.querySelector('.sel-route-song').addEventListener('change', reassign);
+          row.querySelector('.btn-route-view').addEventListener('click', () => {
+            if (!isUnassigned) {
+              const sIdx = songs.findIndex((s) => s.code === curSongCode);
+              if (sIdx >= 0) state.currentSongIndex = sIdx;
+              state.myInstrument = curInst;
+              $('selectMyInstrument').value = curInst;
+              state.currentPage = 1;
+              modalRouting.classList.add('hidden');
+              renderAll();
+            }
+          });
+          row.querySelector('.btn-route-del').addEventListener('click', () => {
+            delete state.uploadedPdfs[oldKey];
+            delete state.pdfPages[oldKey];
+            delete pdfDocCache[oldKey];
+            deletePdfFromDb(oldKey);
+            if (isMasterControl()) broadcastMasterSignal();
+            renderRoutingModal();
+            renderAll();
+          });
+
+          listEl.appendChild(row);
+        });
+
+        if (!shown) {
+          listEl.innerHTML = '<div class="text-center text-xs text-slate-500 py-8">No hay PDFs en esta categoría.</div>';
+        }
+        $('routingSummaryText').textContent = `Mostrando ${shown} de ${allKeys.length} PDFs guardados en este dispositivo.`;
+      };
+
+      $('btnOpenRoutingModal').addEventListener('click', () => { renderRoutingModal(); modalRouting.classList.remove('hidden'); });
+      $('btnJumpToRouting').addEventListener('click', () => { modalFolder.classList.add('hidden'); renderRoutingModal(); modalRouting.classList.remove('hidden'); });
+      $('btnCloseRoutingModal').addEventListener('click', () => modalRouting.classList.add('hidden'));
+      $('btnDoneRoutingModal').addEventListener('click', () => modalRouting.classList.add('hidden'));
+      $('inputRoutingSearch').addEventListener('input', renderRoutingModal);
+
+      $('inputRoutingUploadInbox').addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []).filter((f) => f.name.toLowerCase().endsWith('.pdf'));
+        if (!files.length) return;
+        const targetInst = (state.routingFilterInst !== 'Todos' && state.routingFilterInst !== 'Sin asignar') ? state.routingFilterInst : state.myInstrument;
+        files.forEach((file) => {
+          const key = `__UNASSIGNED__|${targetInst}|${Date.now()}_${Math.floor(Math.random() * 1e5)}`;
+          state.uploadedPdfs[key] = file;
+          persistPdfToDb(key, file);
+        });
+        e.target.value = '';
+        state.routingFilterInst = 'Sin asignar';
+        renderRoutingModal();
+        renderAll();
+      });
+
+      $('btnAutoMatchUnassigned').addEventListener('click', () => {
+        const songs = getActiveSongs();
+        let moved = 0;
+        Object.keys(state.uploadedPdfs).forEach((oldKey) => {
+          if (!oldKey.startsWith('__UNASSIGNED__|')) return;
+          const file = state.uploadedPdfs[oldKey];
+          const { songCode, detectedInst } = parseSongAndInstrument(file.name);
+          const normT = normSongKey(songCode);
+          const matchSong = songs.find((s) => normSongKey(s.code) === normT || normSongKey(s.title).includes(normT) || (normT.length >= 4 && normT.includes(normSongKey(s.code))));
+          if (matchSong) {
+            const inst = detectedInst || oldKey.split('|')[1] || state.myInstrument;
+            const newKey = `${matchSong.code}|${inst}`;
+            delete state.uploadedPdfs[oldKey];
+            deletePdfFromDb(oldKey);
+            state.uploadedPdfs[newKey] = file;
+            persistPdfToDb(newKey, file);
+            moved++;
+          }
+        });
+        if (moved && isMasterControl()) broadcastMasterSignal();
+        renderRoutingModal();
+        renderAll();
+        $('routingSummaryText').textContent = moved ? `Se emparejaron ${moved} PDFs automáticamente.` : 'No se encontraron coincidencias nuevas.';
+      });
+
+      // ===== MODAL: PARTITURAS EN EL MAESTRO (MÚSICO) =====
+      const modalMusicianLib = $('modalMusicianLibrary');
+      const renderMusicianLibModal = () => {
+        const inst = state.myInstrument;
+        $('musicianLibInstTitle').textContent = inst;
+        $('chkAutoStreamPdf').checked = state.autoStreamPdf;
+        const list = $('musicianLibList');
+        const songs = getActiveSongs();
+        list.innerHTML = '';
+
+        let downloadableCount = 0;
+        songs.forEach((song, idx) => {
+          const key = `${song.code}|${inst}`;
+          const hasLocal = !!state.uploadedPdfs[key];
+          const hasOnline = !!state.onlineTempPdfs[key];
+          const inMaster = !!state.masterPdfCatalog[key];
+          if (!hasLocal && inMaster) downloadableCount++;
+
+          const row = document.createElement('div');
+          row.className = 'surface-2 border rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2';
+          let actionsHtml = '';
+          if (hasLocal) {
+            actionsHtml = `<span class="text-[11px] text-emerald-300 font-medium px-2">Local ✓</span><button type="button" class="btn-lib-open px-2.5 py-1 rounded-lg bg-[#1e2432] hover:bg-[#272f42] text-xs text-slate-200">Abrir</button>`;
+          } else if (inMaster) {
+            actionsHtml = `${hasOnline ? '<span class="text-[11px] text-sky-300 font-medium">En línea</span>' : '<button type="button" class="btn-lib-view px-2.5 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/35 text-sky-200 text-xs">Ver en línea</button>'}<button type="button" class="btn-lib-dl px-2.5 py-1 rounded-lg bg-[#e5b869] hover:bg-[#ecc57e] text-[#11151d] text-xs font-semibold">Descargar</button>`;
+          } else {
+            actionsHtml = `<span class="text-[11px] text-slate-500">Sin PDF</span>`;
+          }
+
+          row.innerHTML = `
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-medium text-slate-100 truncate">${esc(song.code)} — ${esc(song.title)}</div>
+              <div class="text-[10px] text-slate-400">${esc(song.key)} • ${esc(song.bpm)} BPM</div>
+            </div>
+            <div class="flex items-center gap-1.5 shrink-0">${actionsHtml}</div>
+          `;
+
+          const openBtn = row.querySelector('.btn-lib-open');
+          if (openBtn) openBtn.addEventListener('click', () => {
+            state.currentSongIndex = idx; state.currentPage = 1; modalMusicianLib.classList.add('hidden'); renderAll();
+          });
+
+          const viewBtn = row.querySelector('.btn-lib-view');
+          if (viewBtn) viewBtn.addEventListener('click', () => {
+            viewBtn.textContent = 'Cargando...';
+            requestPdfFromMaster(key, 'view').then(() => {
+              state.currentSongIndex = idx; state.currentPage = 1; modalMusicianLib.classList.add('hidden'); renderAll();
+            }).catch((err) => { viewBtn.textContent = err.message || 'Error'; });
+          });
+
+          const dlBtn = row.querySelector('.btn-lib-dl');
+          if (dlBtn) dlBtn.addEventListener('click', () => {
+            dlBtn.textContent = 'Bajando...';
+            requestPdfFromMaster(key, 'download').then(() => {
+              renderMusicianLibModal();
+            }).catch((err) => { dlBtn.textContent = err.message || 'Error'; });
+          });
+
+          list.appendChild(row);
+        });
+
+        const dlAllBtn = $('btnDownloadAllMyInstrument');
+        dlAllBtn.textContent = `Descargar todo mi atril (${downloadableCount})`;
+        dlAllBtn.disabled = downloadableCount === 0;
+        dlAllBtn.classList.toggle('opacity-50', downloadableCount === 0);
+      };
+
+      $('btnOpenMusicianLibrary').addEventListener('click', () => { renderMusicianLibModal(); modalMusicianLib.classList.remove('hidden'); });
+      $('btnCloseMusicianLibModal').addEventListener('click', () => modalMusicianLib.classList.add('hidden'));
+      $('btnDoneMusicianLibModal').addEventListener('click', () => modalMusicianLib.classList.add('hidden'));
+      $('chkAutoStreamPdf').addEventListener('change', (e) => { state.autoStreamPdf = e.target.checked; });
+
+      $('btnDownloadAllMyInstrument').addEventListener('click', async () => {
+        const inst = state.myInstrument;
+        const songs = getActiveSongs();
+        const pendingKeys = songs.map((s) => `${s.code}|${inst}`).filter((k) => !state.uploadedPdfs[k] && state.masterPdfCatalog[k]);
+        if (!pendingKeys.length) return;
+        const progEl = $('musicianDownloadProgress');
+        progEl.classList.remove('hidden');
+        for (let i = 0; i < pendingKeys.length; i++) {
+          progEl.textContent = `Descargando ${i + 1} de ${pendingKeys.length}...`;
+          try { await requestPdfFromMaster(pendingKeys[i], 'download'); } catch (e) {}
+        }
+        progEl.textContent = `¡Listo! Se descargaron ${pendingKeys.length} partituras para uso offline.`;
+        renderMusicianLibModal();
+      });
+
+      // ===== MODAL: LISTA BASE Y LIMPIAR SESIÓN =====
+      const modalBaseList = $('modalBaseList');
+      const showBaseFeedback = (msg) => {
+        const fb = $('baseListFeedback');
+        fb.textContent = msg;
+        fb.classList.remove('hidden');
+      };
+
+      const parseLinesToSongs = (rawText) => {
+        const lines = String(rawText || '').split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+        const out = [];
+        lines.forEach((line, i) => {
+          if (i === 0 && /^(cancion|canción|tema|titulo|título|nombre)[,;|]/i.test(line)) return;
+          const sep = line.includes('|') ? '|' : (line.includes(';') ? ';' : (line.includes(',') ? ',' : null));
+          const cols = sep ? line.split(sep).map((c) => c.trim()) : [line];
+          let name = (cols[0] || '').replace(/^\d+[.)\-]\s*/, '').trim();
+          if (!name) return;
+          const genre = (cols[1] && ASSIGNABLE_GENRES.includes(cols[1])) ? cols[1] : detectGenreFromName(name + ' ' + (cols[1] || ''));
+          const key = cols[2] || 'Do Mayor';
+          const bpm = parseInt(cols[3], 10) || 120;
+          out.push({
+            id: 'b_' + Date.now() + '_' + i + '_' + Math.floor(Math.random() * 1e4),
+            code: name,
+            title: name,
+            key,
+            bpm,
+            pages: 2,
+            genre
+          });
+        });
+        return out;
+      };
+
+      const applyImportedBaseSongs = (newSongs, replace) => {
+        if (!newSongs.length) { showBaseFeedback('No se encontraron nombres válidos.'); return; }
+        const localScene = state.scenes.find((s) => s.id === state.currentSceneId) || state.scenes[0];
+        if (replace) {
+          localScene.songs = newSongs;
+          state.currentSongIndex = 0;
+          state.currentPage = 1;
+        } else {
+          const existing = new Set(localScene.songs.map((s) => normSongKey(s.code)));
+          newSongs.forEach((ns) => {
+            if (!existing.has(normSongKey(ns.code))) {
+              localScene.songs.push(ns);
+              existing.add(normSongKey(ns.code));
+            }
+          });
+        }
+        saveAppState();
+        if (isMasterControl()) broadcastMasterSignal();
+        renderAll();
+        showBaseFeedback(`Lista lista con ${localScene.songs.length} canciones. Ahora puedes subir los PDFs de cualquier instrumento.`);
+      };
+
+      $('btnOpenBaseListModal').addEventListener('click', () => {
+        $('baseListFeedback').classList.add('hidden');
+        modalBaseList.classList.remove('hidden');
+      });
+      $('btnCloseBaseListModal').addEventListener('click', () => modalBaseList.classList.add('hidden'));
+      $('btnDoneBaseListModal').addEventListener('click', () => modalBaseList.classList.add('hidden'));
+
+      $('btnApplyBaseListText').addEventListener('click', () => {
+        const parsed = parseLinesToSongs($('inputBaseListText').value);
+        applyImportedBaseSongs(parsed, $('chkBaseReplaceList').checked);
+      });
+
+      $('inputBaseListFile').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const text = await file.text();
+        e.target.value = '';
+        applyImportedBaseSongs(parseLinesToSongs(text), $('chkBaseReplaceList').checked);
+      });
+
+      $('inputBaseListFromPdfs').addEventListener('change', (e) => {
+        const files = Array.from(e.target.files || []).filter((f) => f.name.toLowerCase().endsWith('.pdf'));
+        if (!files.length) return;
+        const replace = $('chkBaseReplaceList').checked;
+        const localScene = state.scenes.find((s) => s.id === state.currentSceneId) || state.scenes[0];
+        if (replace) { localScene.songs = []; state.currentSongIndex = 0; state.currentPage = 1; }
+        const existing = new Set(localScene.songs.map((s) => normSongKey(s.code)));
+        files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).forEach((file) => {
+          const { songCode, detectedInst } = parseSongAndInstrument(file.name, file.webkitRelativePath || '');
+          const inst = detectedInst || state.myInstrument;
+          const stdFile = new File([file], `${songCode} - ${inst}.pdf`, { type: 'application/pdf' });
+          const normT = normSongKey(songCode);
+          let songObj = localScene.songs.find((s) => normSongKey(s.code) === normT);
+          if (!songObj && !existing.has(normT)) {
+            songObj = { id: 'bp_' + Date.now() + '_' + Math.floor(Math.random() * 1e5), code: songCode, title: songCode, key: 'Do Mayor', bpm: 120, pages: 2, genre: detectGenreFromName(songCode) };
+            localScene.songs.push(songObj);
+            existing.add(normT);
+          }
+          if (songObj) {
+            const key = `${songObj.code}|${inst}`;
+            state.uploadedPdfs[key] = stdFile;
+            delete state.pdfPages[key];
+            persistPdfToDb(key, stdFile);
+          }
+        });
+        e.target.value = '';
+        saveAppState();
+        if (isMasterControl()) broadcastMasterSignal();
+        renderAll();
+        showBaseFeedback(`Lista base creada con ${localScene.songs.length} temas y ${files.length} PDFs cargados.`);
+      });
+
+      $('btnExportBaseListTxt').addEventListener('click', () => {
+        const songs = getActiveSongs();
+        const txt = songs.map((s) => `${s.code} | ${s.genre || 'Sin género'} | ${s.key || 'Do Mayor'} | ${s.bpm || 120}`).join('\n');
+        const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'repertorio_base_atrilsync.txt';
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      });
+
+      let clearSongsArmed = false;
+      $('btnClearSongsOnly').addEventListener('click', () => {
+        const btn = $('btnClearSongsOnly');
+        if (!clearSongsArmed) {
+          clearSongsArmed = true;
+          btn.textContent = 'Toca otra vez para confirmar (0 temas)';
+          setTimeout(() => { clearSongsArmed = false; btn.textContent = 'Limpiar solo canciones (0 temas)'; }, 4000);
+          return;
+        }
+        clearSongsArmed = false;
+        btn.textContent = 'Limpiar solo canciones (0 temas)';
+        const localScene = state.scenes.find((s) => s.id === state.currentSceneId) || state.scenes[0];
+        localScene.songs = [];
+        state.currentSongIndex = 0;
+        state.currentPage = 1;
+        state.selectedGenre = 'Todos';
+        saveAppState();
+        if (isMasterControl()) broadcastMasterSignal();
+        renderAll();
+        showBaseFeedback('Repertorio vaciado (0 canciones).');
+      });
+
+      let clearAllArmed = false;
+      $('btnClearAllSession').addEventListener('click', async () => {
+        const btn = $('btnClearAllSession');
+        if (!clearAllArmed) {
+          clearAllArmed = true;
+          btn.textContent = 'Toca otra vez para borrar TODO';
+          setTimeout(() => { clearAllArmed = false; btn.textContent = 'Limpiar TODO (Canciones + PDFs)'; }, 4000);
+          return;
+        }
+        clearAllArmed = false;
+        btn.textContent = 'Limpiar TODO (Canciones + PDFs)';
+        const localScene = state.scenes.find((s) => s.id === state.currentSceneId) || state.scenes[0];
+        localScene.songs = [];
+        state.currentSongIndex = 0;
+        state.currentPage = 1;
+        state.selectedGenre = 'Todos';
+        state.uploadedPdfs = {};
+        state.onlineTempPdfs = {};
+        state.pdfPages = {};
+        Object.keys(pdfDocCache).forEach((k) => { try { pdfDocCache[k].doc.destroy(); } catch (e) {} delete pdfDocCache[k]; });
+        await clearAllPdfsFromDb();
+        saveAppState();
+        if (isMasterControl()) broadcastMasterSignal();
+        renderAll();
+        showBaseFeedback('Sesión reiniciada por completo (0 canciones y 0 PDFs).');
+      });
 
       renderAll();
     });
