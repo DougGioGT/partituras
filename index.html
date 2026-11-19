@@ -182,7 +182,17 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
     </div>
     <div class="group" style="padding:14px;display:flex;flex-direction:column;gap:10px">
       <div><label class="field">Tu nombre</label><input id="inputProfileName" class="input" maxlength="32" placeholder="Ej. Douglas" /></div>
-      <div><label class="field">Tu instrumento</label><select id="selectProfileInstrument" class="input"></select></div>
+      <div><label class="field">Tu instrumento</label><select id="selectProfileInstrument" class="input">
+        <option value="Trompeta 1">Trompeta 1</option>
+        <option value="Trompeta 2">Trompeta 2</option>
+        <option value="Trompeta 3">Trompeta 3</option>
+        <option value="Saxo Alto">Saxo Alto</option>
+        <option value="Saxo Tenor">Saxo Tenor</option>
+        <option value="Piano">Piano</option>
+        <option value="Bajo">Bajo</option>
+        <option value="Guitarra">Guitarra</option>
+        <option value="Percusión">Percusión</option>
+      </select></div>
     </div>
     <p class="sec" style="margin-top:2px">Elige cómo entrar hoy</p>
     <button class="wcard" id="btnStartAsMasterMode"><span class="ic">🎚️</span><span><b>Maestro</b><span class="d">Dirige el repertorio y pasa las páginas de todas las tablets.</span></span></button>
@@ -274,4 +284,994 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
       <button class="row" data-open="sLoad"><span>Cargar partituras (PDF)</span><span class="chev">›</span></button>
       <button class="row" data-open="sRouting"><span>Organizar PDFs</span><span class="chev">›</span></button>
       <button class="row" data-for="musician" data-open="sLibrary"><span>Partituras del Maestro</span><span class="chev">›</span></button>
-      <button class="row" data-for="master musician" data-open="sConn"><spa
+      <button class="row" data-for="master musician" data-open="sConn"><span>Conectar tablets</span><span class="val" id="menuConnVal"></span></button>
+    </div>
+    <div class="group">
+      <div class="row"><span>Metrónomo <span class="val" id="metroVal"></span></span><label class="switch"><input type="checkbox" id="swMetro" /><i></i></label></div>
+      <div class="row"><span>Modo noche en partitura</span><label class="switch"><input type="checkbox" id="swNight" /><i></i></label></div>
+      <div class="row" data-for="musician"><span>Seguir páginas del Maestro</span><label class="switch"><input type="checkbox" id="swSync" /><i></i></label></div>
+      <div class="row"><span>Zoom</span><span class="flex"><button class="icon sm" id="zOut" aria-label="Alejar">−</button><span id="zVal" style="min-width:48px;text-align:center;font-variant-numeric:tabular-nums">100%</span><button class="icon sm" id="zIn" aria-label="Acercar">+</button></span></div>
+    </div>
+    <div class="group">
+      <button class="row" id="btnChangeMode"><span>Cambiar modo</span><span class="val" id="modeVal"></span></button>
+      <button class="row" data-open="sHelp"><span>Ayuda y gestos</span><span class="chev">›</span></button>
+    </div>
+    <p class="foot" id="saveIndicator">Todo se guarda automáticamente</p>
+    <p class="foot" id="offlineVal"></p>
+  </div>
+</section>
+
+<!-- INSTRUMENTO -->
+<section class="sheet" id="sInstrument" role="dialog" aria-label="Instrumento">
+  <div class="sh"><h2>Tu atril</h2><button class="link" data-close>Listo</button></div>
+  <div class="sb"><div class="group" id="instList"></div></div>
+</section>
+
+<!-- REPERTORIO -->
+<section class="sheet" id="sRepertoire" role="dialog" aria-label="Repertorio">
+  <div class="sh"><h2>Repertorio</h2><button class="link" data-close>Listo</button></div>
+  <div class="sb">
+    <input id="inputSearchSong" class="input" type="search" placeholder="Buscar canción o tono" />
+    <div id="genreShortcutBar" class="chips"></div>
+    <div id="setlistContainer" class="group"></div>
+    <div class="flex" data-for="master solo">
+      <button class="btn primary grow" id="btnAddSongModal">+ Canción</button>
+      <button class="btn grow" data-open="sBase">Lista base</button>
+      <button class="btn grow" data-open="sGenres">Géneros</button>
+    </div>
+    <div class="stack" data-for="master solo">
+      <div class="sec">Escenas guardadas</div>
+      <select id="selectScene" class="input"></select>
+      <div class="flex"><button class="btn grow" id="btnSaveNewScene">Guardar como escena</button><button class="btn danger" id="btnDeleteScene">Eliminar</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- GUARDAR ESCENA -->
+<section class="sheet" id="sScene" role="dialog" aria-label="Guardar escena">
+  <div class="sh"><h2>Guardar escena</h2><button class="link" data-close>Cancelar</button></div>
+  <div class="sb">
+    <p class="muted">Guarda el orden actual de canciones para usarlo después.</p>
+    <input id="inputSceneName" class="input" placeholder="Ej. Bloque 2 – Merengue" />
+    <button class="btn primary block" id="btnConfirmSaveScene">Guardar</button>
+  </div>
+</section>
+
+<!-- CANCIÓN -->
+<section class="sheet" id="sSong" role="dialog" aria-label="Canción">
+  <div class="sh"><h2 id="modalSongFormTitle">Nueva canción</h2><button class="link" data-close>Cancelar</button></div>
+  <div class="sb">
+    <div><label class="field">Nombre del archivo</label><input id="inputNewSongId" class="input" placeholder="Mi Princesa" /></div>
+    <div><label class="field">Título</label><input id="inputNewSongTitle" class="input" placeholder="Mix Merengue" /></div>
+    <div class="flex"><div class="grow"><label class="field">Tonalidad</label><input id="inputNewSongKey" class="input" placeholder="Re Menor (Dm)" /></div><div class="grow"><label class="field">BPM</label><input id="inputNewSongBpm" class="input" type="number" inputmode="numeric" value="120" /></div></div>
+    <div><label class="field">Género</label><select id="selectNewSongGenre" class="input"></select></div>
+    <div id="songDetectFeedback" class="note hidden"></div>
+    <button class="btn block" id="btnDetectFromPdf">Detectar tono y BPM desde el PDF</button>
+    <button class="btn primary block" id="btnSaveNewSong">Guardar</button>
+    <button class="btn danger block hidden" id="btnDeleteSong">Eliminar canción</button>
+  </div>
+</section>
+
+<!-- GÉNEROS -->
+<section class="sheet" id="sGenres" role="dialog" aria-label="Géneros">
+  <div class="sh"><h2>Géneros</h2><button class="link" data-close>Listo</button></div>
+  <div class="sb">
+    <p class="muted">Marca varias canciones y asígnales un género de una vez.</p>
+    <div class="flex"><select id="selectBulkGenre" class="input grow"></select><button class="btn primary" id="btnApplyBulkGenre">Aplicar</button></div>
+    <div class="flex"><input id="inputGenreModalSearch" class="input grow" type="search" placeholder="Filtrar" /><button class="btn" id="btnToggleSelectAllGenre">Marcar todas</button></div>
+    <div id="genreAssignList" class="group"></div>
+  </div>
+</section>
+
+<!-- CARGAR PDFs -->
+<section class="sheet" id="sLoad" role="dialog" aria-label="Cargar partituras">
+  <div class="sh"><h2>Cargar partituras</h2><button class="link" data-close id="btnDoneFolderModal">Listo</button></div>
+  <div class="sb">
+    <p class="muted">Se guardan en este dispositivo y funcionan sin internet. Nombra tus archivos <b>Canción - Instrumento.pdf</b> y la app los ordena sola.</p>
+    <div><label class="field">¿De qué instrumento son?</label><select id="selectBatchInstrument" class="input"></select></div>
+    <label class="btn primary block" style="cursor:pointer">Elegir PDFs<input id="inputBatchPdfFiles" type="file" accept="application/pdf" multiple class="hidden" /></label>
+    <label class="btn block" style="cursor:pointer">Elegir una carpeta (PC / Mac)<input id="inputBatchFolderPc" type="file" webkitdirectory directory multiple class="hidden" /></label>
+    <div class="group"><div class="row"><span style="font-size:14px">Si no coincide con ninguna canción, enviar a "Sin asignar"</span><label class="switch"><input type="checkbox" id="chkImportUnmatchedToInbox" /><i></i></label></div></div>
+    <div id="batchImportProgressBox" class="stack hidden" style="gap:8px"><div class="flex" style="justify-content:space-between"><span id="batchImportProgressLabel" class="muted"></span><b id="batchImportProgressPct">0%</b></div><div class="bar"><i id="batchImportProgressBar"></i></div><div id="batchImportCurrentFile" class="muted t"></div></div>
+    <div id="batchImportFeedback" class="note ok hidden"></div>
+    <button class="btn block" id="btnJumpToRouting">Organizar PDFs cargados</button>
+  </div>
+</section>
+
+<!-- ORGANIZAR -->
+<section class="sheet" id="sRouting" role="dialog" aria-label="Organizar PDFs">
+  <div class="sh"><h2>Organizar PDFs</h2><button class="link" data-close>Listo</button></div>
+  <div class="sb">
+    <div id="routingInstrumentTabs" class="chips"></div>
+    <input id="inputRoutingSearch" class="input" type="search" placeholder="Buscar archivo o canción" />
+    <div class="flex">
+      <label class="btn sm grow" style="cursor:pointer">+ Subir a "Sin asignar"<input id="inputRoutingUploadInbox" type="file" accept="application/pdf" multiple class="hidden" /></label>
+      <button class="btn sm grow" id="btnAutoMatchUnassigned">Auto-emparejar</button>
+    </div>
+    <div id="routingList" class="stack" style="gap:8px"></div>
+    <p id="routingSummaryText" class="muted"></p>
+    <button class="btn block" id="btnDownloadByInstrument">Descargar PDFs de este instrumento</button>
+  </div>
+</section>
+
+<!-- BIBLIOTECA DEL MAESTRO -->
+<section class="sheet" id="sLibrary" role="dialog" aria-label="Partituras del Maestro">
+  <div class="sh"><h2>Del Maestro</h2><button class="link" data-close>Listo</button></div>
+  <div class="sb">
+    <select id="selectMusicianLibInstrument" class="input"></select>
+    <div class="group"><div class="row"><span style="font-size:14px">Ver en línea si falta el PDF</span><label class="switch"><input type="checkbox" id="chkAutoStreamPdf" checked /><i></i></label></div></div>
+    <button class="btn primary block" id="btnDownloadAllMyInstrument">Descargar todo</button>
+    <div id="musicianDownloadProgress" class="note hidden"></div>
+    <div id="musicianLibList" class="group"></div>
+  </div>
+</section>
+
+<!-- LISTA BASE -->
+<section class="sheet" id="sBase" role="dialog" aria-label="Lista base">
+  <div class="sh"><h2>Lista base</h2><button class="link" data-close>Listo</button></div>
+  <div class="sb">
+    <p class="muted">Crea tu repertorio guía; después los PDFs de cualquier instrumento se emparejan solos.</p>
+    <div class="group"><div class="row"><span>Reemplazar la lista actual</span><label class="switch"><input type="checkbox" id="chkBaseReplaceList" checked /><i></i></label></div></div>
+    <textarea id="inputBaseListText" class="input" placeholder="Una canción por línea:&#10;Mi Princesa&#10;Súbete a la Nave | Merengue | Gm | 132"></textarea>
+    <button class="btn primary block" id="btnApplyBaseListText">Crear lista desde el texto</button>
+    <div class="flex">
+      <label class="btn grow" style="cursor:pointer">Importar .txt / .csv<input id="inputBaseListFile" type="file" accept=".txt,.csv,text/plain,text/csv" class="hidden" /></label>
+      <label class="btn grow" style="cursor:pointer">Desde PDFs<input id="inputBaseListFromPdfs" type="file" accept="application/pdf" multiple class="hidden" /></label>
+    </div>
+    <div id="baseListFeedback" class="note ok hidden"></div>
+    <div class="sec">Zona de borrado</div>
+    <button class="btn block" id="btnExportBaseListTxt">Exportar lista (.txt)</button>
+    <div class="flex">
+      <button class="btn grow" id="btnExportBackupJson">Respaldo completo (.json)</button>
+      <label class="btn grow" style="cursor:pointer">Restaurar respaldo<input id="inputImportBackupJson" type="file" accept=".json,application/json" class="hidden" /></label>
+    </div>
+    <button class="btn danger block" id="btnClearSongsOnly">Vaciar canciones</button>
+    <button class="btn danger block" id="btnClearAllSession">Borrar todo (canciones y PDFs)</button>
+  </div>
+</section>
+
+<!-- AVISOS -->
+<section class="sheet" id="sCue" role="dialog" aria-label="Avisos">
+  <div class="sh"><h2>Aviso a los músicos</h2><button class="link" data-close>Cerrar</button></div>
+  <div class="sb">
+    <div class="flex">
+      <button class="btn grow btn-cue" data-cue="Mambo Metales">Mambo</button>
+      <button class="btn grow btn-cue" data-cue="Repetir Coro">Repetir</button>
+      <button class="btn grow btn-cue" data-cue="Coda / Final">Coda</button>
+    </div>
+    <div class="flex"><input id="inputCueCustom" class="input grow" placeholder="Otro aviso…" /><button class="btn primary" id="btnCueCustom">Enviar</button></div>
+    <button class="btn danger block btn-cue" data-cue="">Quitar aviso</button>
+  </div>
+</section>
+
+<!-- CONEXIÓN -->
+<section class="sheet" id="sConn" role="dialog" aria-label="Conectar tablets">
+  <div class="sh"><h2>Conectar</h2><button class="link" data-close id="btnDoneConnModal">Listo</button></div>
+  <div class="sb">
+    <div class="seg"><button id="tabConnQrOffline" class="on">Sin internet (QR)</button><button id="tabConnRoomOnline">Con internet</button></div>
+
+    <div id="panelConnQr" class="stack">
+      <div class="note" data-for="master">Misma red Wi-Fi o hotspot. <b>1.</b> Toca "Mostrar QR". <b>2.</b> El músico lo escanea y te muestra su respuesta. <b>3.</b> Escanea esa respuesta.</div>
+      <div class="note" data-for="musician">Misma red Wi-Fi o hotspot. Escanea el QR del Maestro y luego muéstrale tu QR de respuesta.</div>
+      <button class="btn primary block" id="btnQrMasterCreate" data-for="master">Mostrar QR de invitación</button>
+      <button class="btn primary block" id="btnQrMusicianScan" data-for="musician">Escanear QR del Maestro</button>
+      <div id="qrScannerBox" class="stack hidden" style="gap:8px">
+        <div class="flex" style="justify-content:space-between"><b id="qrScannerTitle">Apunta al QR…</b><button id="btnStopQrScan" class="link" style="color:var(--red)">Cerrar cámara</button></div>
+        <video id="qrVideo" playsinline muted></video><canvas id="qrScanCanvas" class="hidden"></canvas>
+      </div>
+      <div id="qrOutputContainer" class="stack hidden" style="text-align:center;gap:8px">
+        <b id="qrInstructionText" style="color:var(--accent)"></b>
+        <div id="qrDisplayBox" class="qrbox"></div>
+        <p class="muted">Toca el QR para verlo a pantalla completa.</p>
+        <button id="btnQrMasterScanAnswer" class="btn primary block hidden">Escanear respuesta del músico</button>
+        <button id="btnCopyQrText" class="btn sm">Copiar código</button>
+      </div>
+      <details class="group"><summary>¿Sin cámara? Pegar código</summary><div>
+        <textarea id="inputManualSignal" class="input" placeholder="Pega el código (empieza con AS1|…)"></textarea>
+        <button id="btnApplyManualSignal" class="btn block">Aplicar</button></div></details>
+      <div id="qrStatusBox" class="note">Listo para emparejar.</div>
+    </div>
+
+    <div id="panelConnOnline" class="stack hidden">
+      <div class="note" id="p2pStatusBox">Sin conexión a salas.</div>
+      <p class="muted">Las salas usan un servidor público: no pongas partituras privadas en una sala sin PIN.</p>
+      <div class="stack" data-for="musician">
+        <div class="flex" style="justify-content:space-between"><b>Salas disponibles</b><button id="btnRefreshRooms" class="btn sm">Actualizar</button></div>
+        <div id="roomList" class="group"></div>
+        <input id="inputJoinPin" class="input" maxlength="12" placeholder="PIN (solo si la sala tiene candado)" />
+        <div id="joinInfo" class="note ok hidden"></div>
+      </div>
+      <div class="stack" data-for="master">
+        <b>Crear sala</b>
+        <input id="inputRoomName" class="input" maxlength="30" placeholder="Nombre (ej. Metales)" />
+        <select id="selectRoomSection" class="input"><option>General</option><option>Metales</option><option>Trompetas</option><option>Saxofones</option><option>Ritmo</option><option>Percusión</option><option>Coros</option></select>
+        <input id="inputRoomPin" class="input" maxlength="12" placeholder="PIN (opcional)" />
+        <div class="flex"><button id="btnStartMasterRoom" class="btn primary grow">Crear sala</button><button id="btnCloseMasterRoom" class="btn danger grow">Cerrar sala</button></div>
+        <div id="hostInfo" class="note ok hidden"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AYUDA -->
+<section class="sheet" id="sHelp" role="dialog" aria-label="Ayuda">
+  <div class="sh"><h2>Ayuda</h2><button class="link" data-close>Entendido</button></div>
+  <div class="sb">
+    <div class="group">
+      <div class="row"><span>Pasar página</span><span class="val">Desliza o toca los bordes</span></div>
+      <div class="row"><span>Zoom</span><span class="val">Pellizca · doble toque</span></div>
+      <div class="row"><span>Ocultar barras</span><span class="val">Toca el centro</span></div>
+      <div class="row"><span>Pedal / teclado</span><span class="val">← → páginas · ↑ ↓ canciones</span></div>
+    </div>
+    <div class="note">Conectar sin internet: Maestro → <b>Mostrar QR</b>; Músico → <b>Escanear</b> y mostrar su respuesta; Maestro → <b>Escanear respuesta</b>.</div>
+  </div>
+</section>
+
+<script>
+const LIBS={QRCode:['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js','https://unpkg.com/qrcodejs@1.0.0/qrcode.min.js'],jsQR:['https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js','https://unpkg.com/jsqr@1.4.0/dist/jsQR.js'],mqtt:['https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js','https://unpkg.com/mqtt@5.10.1/dist/mqtt.min.js']};
+const libPromises={};
+function loadScript(urls){return new Promise(resolve=>{let i=0;const next=()=>{if(i>=urls.length)return resolve(false);const s=document.createElement('script');s.src=urls[i++];s.onload=()=>resolve(true);s.onerror=()=>{s.remove();next();};document.head.appendChild(s);};next();});}
+function ensureLib(name){if(window[name])return Promise.resolve(true);if(!libPromises[name]){libPromises[name]=loadScript(LIBS[name]).then(ok=>{const good=ok&&!!window[name];if(!good)delete libPromises[name];return good;});}return libPromises[name];}
+if(window.pdfjsLib)window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const INSTRUMENTS=['Trompeta 1','Trompeta 2','Trompeta 3','Saxo Alto','Saxo Tenor','Piano','Bajo','Guitarra','Percusión'];
+const GENRES=['Todos','Cumbia','Merengue','Salsa','Ska / Fusión','Balada','Mix / Show','Sin género'];
+const ASSIGNABLE_GENRES=GENRES.filter(g=>g!=='Todos');
+function detectGenreFromName(text){const t=String(text||'').toLowerCase();if(/cumbia/.test(t))return'Cumbia';if(/mereng/.test(t))return'Merengue';if(/salsa/.test(t))return'Salsa';if(/\bska\b|rock|fusion|fusión/.test(t))return'Ska / Fusión';if(/balada|bolero|romant/.test(t))return'Balada';if(/mix|popurri|popurrí|show/.test(t))return'Mix / Show';return'Sin género';}
+
+const state={appRole:'master',hasChosenRole:false,zenMode:false,invertColors:false,zoomLevel:1,userName:'',myInstrument:'Trompeta 1',searchQuery:'',selectedGenre:'Todos',currentSceneId:'scene_default',scenes:[{id:'scene_default',name:'Repertorio',songs:[]}],currentSongIndex:0,currentPage:1,activeCue:'',uploadedPdfs:{},onlineTempPdfs:{},masterPdfCatalog:{},autoStreamPdf:true,syncMasterPage:false,masterMobileTab:'list',routingFilterInst:'Todos',pendingPdfTransfers:{},pdfPages:{},remoteSongs:null,offlineRole:'none',onlineRole:'none',offlinePeers:[],pendingOffline:null,pendingTimer:null,musicianPc:null,musicianDc:null,lastQrPayload:'',qrStream:null,qrScanRaf:null,keepStream:null,isProcessingQr:false,metronomeOn:false,metronomeTimer:null,metronomeSong:null,audioCtx:null,offlineReady:false};
+
+function getRole(){if(state.appRole==='solo')return'solo';if(state.offlineRole==='musician'||state.onlineRole==='musician')return'musician';if(state.offlineRole==='master'||state.onlineRole==='master')return'master';return state.appRole;}
+function isMasterControl(){return getRole()==='master';}
+function getActiveSongs(){if(getRole()==='musician'&&state.remoteSongs&&state.remoteSongs.length)return state.remoteSongs;const sc=state.scenes.find(s=>s.id===state.currentSceneId)||state.scenes[0];return sc?sc.songs:[];}
+function getLocalScene(){return state.scenes.find(s=>s.id===state.currentSceneId)||state.scenes[0];}
+function getPages(song,inst){return state.pdfPages[`${song.code}|${inst||state.myInstrument}`]||song.pages||1;}
+
+/* ===== Persistencia ===== */
+function saveAppState(){try{localStorage.setItem('atrilsync_state_v3',JSON.stringify({chosen:state.hasChosenRole,appRole:state.appRole,userName:state.userName,myInstrument:state.myInstrument,invertColors:state.invertColors,zoomLevel:state.zoomLevel,currentSceneId:state.currentSceneId,scenes:state.scenes,currentSongIndex:state.currentSongIndex,currentPage:state.currentPage,autoStreamPdf:state.autoStreamPdf,syncMasterPage:state.syncMasterPage}));const ind=$('saveIndicator');if(ind)ind.textContent='Guardado a las '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch(e){}}
+function loadAppState(){try{let raw=localStorage.getItem('atrilsync_state_v3');if(!raw)raw=localStorage.getItem('atrilsync_state_v2');if(!raw)return;const d=JSON.parse(raw);state.hasChosenRole=!!d.chosen;if(['master','musician','solo'].includes(d.appRole))state.appRole=d.appRole;if(typeof d.userName==='string')state.userName=d.userName.trim();if(INSTRUMENTS.includes(d.myInstrument))state.myInstrument=d.myInstrument;if(typeof d.invertColors==='boolean')state.invertColors=d.invertColors;if(typeof d.zoomLevel==='number')state.zoomLevel=Math.min(2.4,Math.max(.6,d.zoomLevel));if(Array.isArray(d.scenes)&&d.scenes.length)state.scenes=d.scenes;state.currentSceneId=(d.currentSceneId&&state.scenes.some(s=>s.id===d.currentSceneId))?d.currentSceneId:state.scenes[0].id;const songs=getActiveSongs();if(typeof d.currentSongIndex==='number'&&d.currentSongIndex>=0&&d.currentSongIndex<songs.length)state.currentSongIndex=d.currentSongIndex;if(typeof d.currentPage==='number'&&d.currentPage>=1)state.currentPage=d.currentPage;if(typeof d.autoStreamPdf==='boolean')state.autoStreamPdf=d.autoStreamPdf;if(typeof d.syncMasterPage==='boolean')state.syncMasterPage=d.syncMasterPage;}catch(e){}}
+function openPdfDb(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window))return reject(new Error('No IndexedDB'));const req=indexedDB.open('AtrilSyncPdfDB',1);req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('pdfs'))db.createObjectStore('pdfs',{keyPath:'key'});};req.onsuccess=e=>resolve(e.target.result);req.onerror=e=>reject(e.target.error);});}
+async function dbTx(mode,fn){try{const db=await openPdfDb();return await new Promise((resolve,reject)=>{const tx=db.transaction('pdfs',mode);const r=fn(tx.objectStore('pdfs'));tx.oncomplete=()=>resolve(r&&r.result);tx.onerror=()=>reject(tx.error);});}catch(e){return null;}}
+const persistPdfToDb=(key,file)=>dbTx('readwrite',s=>s.put({key,name:file.name,blob:file}));
+const deletePdfFromDb=key=>dbTx('readwrite',s=>s.delete(key));
+const clearAllPdfsFromDb=()=>dbTx('readwrite',s=>s.clear());
+async function restorePdfsFromDb(){const rows=await dbTx('readonly',s=>s.getAll());(rows||[]).forEach(row=>{if(row&&row.key&&row.blob)state.uploadedPdfs[row.key]=new File([row.blob],row.name||'partitura.pdf',{type:'application/pdf'});});renderAll();}
+
+/* ===== Sincronización ===== */
+let syncChannel=null;
+try{if('BroadcastChannel' in window){syncChannel=new BroadcastChannel('atril_sync_channel_v1');syncChannel.onmessage=ev=>{const m=ev.data;if(m&&m.type==='MASTER_STATE_UPDATE'&&state.appRole==='musician')applyMasterState(m);};}}catch(e){}
+function buildMasterPdfCatalog(){const cat={};Object.keys(state.uploadedPdfs).forEach(k=>{if(k.startsWith('__UNASSIGNED__|'))return;const f=state.uploadedPdfs[k];if(f)cat[k]={name:f.name,size:f.size||0};});return cat;}
+function buildMasterPayload(){return{type:'MASTER_STATE_UPDATE',songIndex:state.currentSongIndex,page:state.currentPage,cue:state.activeCue,songs:getActiveSongs().map(s=>({code:s.code,title:s.title,key:s.key,bpm:s.bpm,pages:s.pages,genre:s.genre||'Sin género'})),pdfCatalog:buildMasterPdfCatalog(),ts:Date.now()};}
+function applyMasterState(msg){
+  if(getRole()==='musician'&&Array.isArray(msg.songs))state.remoteSongs=msg.songs.map(s=>({id:'r_'+s.code,code:String(s.code),title:String(s.title||s.code),key:String(s.key||''),bpm:Number(s.bpm)||120,pages:Number(s.pages)||1,genre:String(s.genre||'Sin género')}));
+  if(getRole()==='musician'&&msg.pdfCatalog&&typeof msg.pdfCatalog==='object')state.masterPdfCatalog=msg.pdfCatalog;
+  const songs=getActiveSongs();
+  const songChanged=typeof msg.songIndex==='number'&&songs[msg.songIndex]&&msg.songIndex!==state.currentSongIndex;
+  if(typeof msg.songIndex==='number'&&songs[msg.songIndex])state.currentSongIndex=msg.songIndex;
+  if(songChanged)state.currentPage=(state.syncMasterPage&&msg.page>=1)?msg.page:1;
+  else if(state.syncMasterPage&&typeof msg.page==='number'&&msg.page>=1)state.currentPage=msg.page;
+  state.activeCue=msg.cue||'';
+  if(getRole()!=='musician')saveAppState();
+  renderAll();
+}
+function broadcastMasterSignal(){
+  if(state.appRole==='solo')return;
+  const payload=buildMasterPayload();
+  try{if(syncChannel)syncChannel.postMessage(payload);}catch(e){}
+  if(state.offlineRole==='master'&&state.offlinePeers.length){const str=JSON.stringify(payload);state.offlinePeers.forEach(p=>{if(p.dc&&p.dc.readyState==='open'){try{p.dc.send(str);}catch(e){}}});}
+  if(state.onlineRole==='master'){mqPublishState(payload);mqPublishDir();}
+}
+
+/* ===== Transferencia de PDFs ===== */
+function arrayBufferToBase64(buffer){const bytes=new Uint8Array(buffer);let bin='';const step=0x8000;for(let i=0;i<bytes.length;i+=step)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+step));return btoa(bin);}
+function base64ToUint8Array(b64){const bin=atob(b64);const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return bytes;}
+async function handleMasterPdfRequest(req,sendFn){
+  const file=state.uploadedPdfs[req.key];
+  if(!file){await sendFn({type:'PDF_ERROR',reqId:req.reqId,key:req.key,error:'El Maestro no tiene este PDF.'});return;}
+  try{
+    const buf=await file.arrayBuffer();const CHUNK=24576;const total=Math.max(1,Math.ceil(buf.byteLength/CHUNK));
+    await sendFn({type:'PDF_START',reqId:req.reqId,key:req.key,name:file.name,size:buf.byteLength,totalChunks:total});
+    for(let i=0;i<total;i++){await sendFn({type:'PDF_CHUNK',reqId:req.reqId,idx:i,data:arrayBufferToBase64(buf.slice(i*CHUNK,(i+1)*CHUNK))});await sleep(8);}
+    await sendFn({type:'PDF_END',reqId:req.reqId,key:req.key});
+  }catch(e){try{await sendFn({type:'PDF_ERROR',reqId:req.reqId,key:req.key,error:'Error al leer el PDF en el Maestro.'});}catch(_){}}
+}
+function armTransferTimeout(t){clearTimeout(t.timeout);t.timeout=setTimeout(()=>{if(state.pendingPdfTransfers[t.reqId]){delete state.pendingPdfTransfers[t.reqId];t.reject(new Error('Tiempo de espera agotado.'));}},30000);}
+function handleIncomingPdfTransferMsg(msg){
+  const t=state.pendingPdfTransfers[msg.reqId];if(!t)return;
+  armTransferTimeout(t);
+  if(msg.type==='PDF_START'){t.name=msg.name||'partitura.pdf';t.totalChunks=msg.totalChunks||1;t.chunks=new Array(t.totalChunks);t.received=0;if(t.onProgress)t.onProgress(0,t.totalChunks);}
+  else if(msg.type==='PDF_CHUNK'){if(t.chunks&&typeof msg.idx==='number'&&!t.chunks[msg.idx]){t.chunks[msg.idx]=base64ToUint8Array(msg.data);t.received++;if(t.onProgress)t.onProgress(t.received,t.totalChunks);}}
+  else if(msg.type==='PDF_END'){
+    clearTimeout(t.timeout);delete state.pendingPdfTransfers[msg.reqId];
+    if(!t.chunks||t.chunks.some(c=>!c)){t.reject(new Error('Transferencia incompleta. Intenta de nuevo.'));return;}
+    const total=t.chunks.reduce((a,c)=>a+c.length,0);const merged=new Uint8Array(total);let off=0;t.chunks.forEach(c=>{merged.set(c,off);off+=c.length;});
+    const file=new File([merged],t.name||'partitura.pdf',{type:'application/pdf'});
+    delete state.pdfPages[t.key];
+    if(t.mode==='download'){state.uploadedPdfs[t.key]=file;persistPdfToDb(t.key,file);}else state.onlineTempPdfs[t.key]=file;
+    t.resolve(file);renderAll();
+  }else if(msg.type==='PDF_ERROR'){clearTimeout(t.timeout);delete state.pendingPdfTransfers[msg.reqId];t.reject(new Error(msg.error||'Error de transferencia'));}
+}
+function requestPdfFromMaster(key,mode,onProgress){
+  const existing=Object.values(state.pendingPdfTransfers).find(t=>t.key===key&&t.mode===mode);if(existing)return existing.promise;
+  const reqId='req_'+Date.now()+'_'+Math.random().toString(16).slice(2,7);let res,rej;const promise=new Promise((a,b)=>{res=a;rej=b;});
+  const t={reqId,key,mode,onProgress,resolve:res,reject:rej,promise};state.pendingPdfTransfers[reqId]=t;armTransferTimeout(t);
+  if(state.offlineRole==='musician'&&state.musicianDc&&state.musicianDc.readyState==='open'){try{state.musicianDc.send(JSON.stringify({type:'REQ_PDF',reqId,key,mode}));}catch(e){rej(e);}}
+  else if(state.onlineRole==='musician'&&MQ.join&&MQ.join.client.connected){try{MQ.join.client.publish(MQ.join.base+'/req',JSON.stringify({type:'REQ_PDF',reqId,key,mode,clientId:MQ.join.cid}),{qos:1});}catch(e){rej(e);}}
+  else{clearTimeout(t.timeout);delete state.pendingPdfTransfers[reqId];rej(new Error('No estás conectado a un Maestro.'));}
+  return promise;
+}
+async function dcSend(dc,obj){if(!dc||dc.readyState!=='open')return;while(dc.bufferedAmount>512*1024&&dc.readyState==='open')await sleep(30);dc.send(JSON.stringify(obj));}
+
+/* ===== Avisos y estado de conexión ===== */
+let connToastTimer=null;
+function showConnToast(type,title,detail){const b=$('connToast');b.className='glass show '+(type==='success'?'success':'error');$('connToastIcon').textContent=type==='success'?'✓':'✕';$('connToastTitle').textContent=title||'';$('connToastDetail').textContent=detail||'';clearTimeout(connToastTimer);connToastTimer=setTimeout(()=>b.classList.remove('show'),5000);}
+function updateConnBadge(){
+  const parts=[];let master=false;
+  const offN=state.offlinePeers.filter(p=>p.dc&&p.dc.readyState==='open').length;
+  if(state.offlineRole==='master'&&offN){parts.push(offN+(offN===1?' tablet':' tablets'));master=true;}
+  if(state.offlineRole==='musician')parts.push('Conectado');
+  if(MQ.host){parts.push(MQ.host.name+' ('+Object.keys(MQ.presence).length+')');master=true;}
+  if(MQ.join)parts.push(MQ.join.name);
+  const txt=parts.length?parts.join(' · '):'Conectar';
+  $('connText').textContent=txt;$('connDot').classList.toggle('on',!!parts.length);$('menuConnVal').textContent=parts.length?txt:'Sin conexión';
+}
+
+/* ===== QR offline ===== */
+function setQrStatus(html,tone){const b=$('qrStatusBox');b.innerHTML=html;b.className='note'+(tone==='ok'?' ok':tone==='err'?' err':'');}
+function showQrFullscreen(src){const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:200;background:#fff;display:flex;align-items:center;justify-content:center;padding:16px';const c=document.createElement('canvas');c.width=src.width;c.height=src.height;c.getContext('2d').drawImage(src,0,0);c.style.cssText='width:min(94vw,94vh);height:auto;image-rendering:pixelated';ov.appendChild(c);const h=document.createElement('div');h.textContent='Toca para cerrar';h.style.cssText='position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#64748b;font:600 13px sans-serif';ov.appendChild(h);ov.addEventListener('click',()=>ov.remove());document.body.appendChild(ov);}
+async function renderQrString(text,instruction,showScanAnswerBtn){
+  state.lastQrPayload=text;const box=$('qrDisplayBox');box.innerHTML='';$('qrInstructionText').textContent=instruction;$('qrOutputContainer').classList.remove('hidden');$('btnQrMasterScanAnswer').classList.toggle('hidden',!showScanAnswerBtn);
+  const ok=await ensureLib('QRCode');if(!ok){box.textContent='Usa "Copiar código".';return;}
+  try{
+    const tmp=document.createElement('div');const q=new window.QRCode(tmp,{text,width:64,height:64,correctLevel:window.QRCode.CorrectLevel.M});
+    const model=q._oQRCode;const n=model.getModuleCount();const quiet=4;const px=Math.max(6,Math.floor(480/(n+quiet*2)));const size=(n+quiet*2)*px;
+    const canvas=document.createElement('canvas');canvas.width=size;canvas.height=size;const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);ctx.fillStyle='#000';
+    for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(model.isDark(r,c))ctx.fillRect((c+quiet)*px,(r+quiet)*px,px,px);
+    canvas.addEventListener('click',()=>showQrFullscreen(canvas));box.appendChild(canvas);
+  }catch(e){box.textContent='Usa "Copiar código".';}
+}
+function stopQrScanner(){if(state.qrScanRaf){cancelAnimationFrame(state.qrScanRaf);state.qrScanRaf=null;}if(state.qrStream){state.qrStream.getTracks().forEach(t=>t.stop());state.qrStream=null;}$('qrScannerBox').classList.add('hidden');}
+async function startQrScanner(title){
+  const box=$('qrScannerBox'),video=$('qrVideo'),canvas=$('qrScanCanvas');
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){setQrStatus('La cámara requiere <b>https://</b>. Usa "Pegar código".','err');return;}
+  stopQrScanner();$('qrScannerTitle').textContent=title||'Apunta al QR…';box.classList.remove('hidden');ensureLib('jsQR');
+  let detector=null;try{if('BarcodeDetector' in window)detector=new window.BarcodeDetector({formats:['qr_code']});}catch(e){}
+  try{
+    let stream;try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}}});}catch(e1){stream=await navigator.mediaDevices.getUserMedia({video:true});}
+    state.qrStream=stream;video.setAttribute('playsinline','');video.muted=true;video.srcObject=stream;await video.play();
+    const ctx=canvas.getContext('2d',{willReadFrequently:true});let busy=false,last=0;
+    const tick=async ts=>{
+      if(!state.qrStream)return;state.qrScanRaf=requestAnimationFrame(tick);
+      if(busy||state.isProcessingQr||ts-last<110||video.readyState<2||!video.videoWidth)return;last=ts;busy=true;
+      try{
+        let text=null;
+        if(detector){const f=await detector.detect(video);if(f&&f.length)text=f[0].rawValue;}
+        if(!text&&window.jsQR){const w=video.videoWidth,h=video.videoHeight,sc=Math.min(1,800/Math.max(w,h));canvas.width=Math.round(w*sc);canvas.height=Math.round(h*sc);ctx.drawImage(video,0,0,canvas.width,canvas.height);const img=ctx.getImageData(0,0,canvas.width,canvas.height);const code=window.jsQR(img.data,img.width,img.height,{inversionAttempts:'attemptBoth'});if(code&&code.data)text=code.data;}
+        if(text&&text.indexOf('AS1|')===0){state.isProcessingQr=true;if(state.qrScanRaf){cancelAnimationFrame(state.qrScanRaf);state.qrScanRaf=null;}box.classList.add('hidden');try{await handleIncomingQrPayload(text);}finally{stopQrScanner();setTimeout(()=>{state.isProcessingQr=false;},700);}}
+      }catch(e){}finally{busy=false;}
+    };
+    state.qrScanRaf=requestAnimationFrame(tick);
+  }catch(err){box.classList.add('hidden');setQrStatus('No se pudo abrir la cámara. Da permiso o usa "Pegar código".','err');}
+}
+const isV4=ip=>/^\d{1,3}(\.\d{1,3}){3}$/.test(ip);
+function compactFromSdp(type,sdp){
+  const get=re=>{const m=sdp.match(re);return m?m[1].trim():'';};
+  const u=get(/a=ice-ufrag:(\S+)/),p=get(/a=ice-pwd:(\S+)/),f=get(/a=fingerprint:sha-256 (\S+)/);let cands=[];
+  sdp.split(/\r?\n/).forEach(line=>{const m=line.match(/^a=candidate:\S+ \d+ udp \d+ (\S+) (\d+) typ host/i);if(m)cands.push({ip:m[1],port:m[2]});});
+  const v4=cands.filter(c=>isV4(c.ip));cands=(v4.length?v4:cands).slice(0,4);
+  if(!u||!p||!f)return null;
+  return'AS1|'+type+'|'+u+'|'+p+'|'+f.replace(/:/g,'')+'|'+cands.map(c=>c.ip+'/'+c.port).join(',');
+}
+function sdpFromCompact(str){
+  const p=String(str).replace(/\s+/g,'').split('|');if(p[0]!=='AS1'||p.length<6)return null;
+  const type=p[1]==='o'?'offer':'answer';const fp=(p[4].match(/.{2}/g)||[]).join(':');
+  const lines=['v=0','o=- '+Math.floor(Math.random()*1e12)+' 2 IN IP4 127.0.0.1','s=-','t=0 0','a=group:BUNDLE 0','m=application 9 UDP/DTLS/SCTP webrtc-datachannel','c=IN IP4 0.0.0.0','a=ice-ufrag:'+p[2],'a=ice-pwd:'+p[3],'a=fingerprint:sha-256 '+fp,'a=setup:'+(type==='offer'?'actpass':'active'),'a=mid:0','a=sctp-port:5000','a=max-message-size:262144'];
+  const cands=p[5]?p[5].split(','):[];
+  cands.forEach((c,i)=>{const idx=c.lastIndexOf('/');lines.push('a=candidate:'+(i+1)+' 1 udp '+(2122260223-i)+' '+c.slice(0,idx)+' '+c.slice(idx+1)+' typ host generation 0');});
+  if(cands.length)lines.push('a=end-of-candidates');
+  return{type,sdp:lines.join('\r\n')+'\r\n'};
+}
+function waitForIceComplete(pc,ms){return new Promise(resolve=>{if(pc.iceGatheringState==='complete')return resolve();let d=false;const done=()=>{if(d)return;d=true;clearTimeout(timer);resolve();};const timer=setTimeout(done,ms||3000);pc.addEventListener('icegatheringstatechange',()=>{if(pc.iceGatheringState==='complete')done();});pc.addEventListener('icecandidate',e=>{if(!e.candidate)done();});});}
+async function grabCameraForIce(){try{if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)state.keepStream=await navigator.mediaDevices.getUserMedia({video:true});}catch(e){}}
+function releaseCameraForIce(){if(state.keepStream){state.keepStream.getTracks().forEach(t=>t.stop());state.keepStream=null;}}
+function sendOfflineHello(){if(state.musicianDc&&state.musicianDc.readyState==='open'){try{state.musicianDc.send(JSON.stringify({type:'HELLO',name:state.userName,instrument:state.myInstrument}));}catch(e){}}}
+function registerOfflinePeer(pc,dc){
+  const peer={pc,dc,instrument:''};state.offlinePeers.push(peer);state.offlineRole='master';
+  dc.onmessage=ev=>{try{const m=JSON.parse(ev.data);
+    if(m&&m.type==='HELLO'){peer.name=m.name||'';peer.instrument=m.instrument||'';const label=peer.name?(peer.name+(peer.instrument?' ('+peer.instrument+')':'')):(peer.instrument||'Músico');updateOfflineStatus();showConnToast('success','Conectado',label+' enlazado por QR.');}
+    if(m&&m.type==='REQ_PDF')handleMasterPdfRequest(m,out=>dcSend(dc,out));}catch(e){}};
+  dc.onclose=()=>{state.offlinePeers=state.offlinePeers.filter(p=>p!==peer);if(!state.offlinePeers.length)state.offlineRole='none';updateConnBadge();updateOfflineStatus();showConnToast('error','Tablet desconectada',(peer.instrument||'Un músico')+' cerró la conexión.');};
+}
+function updateOfflineStatus(){
+  const open=state.offlinePeers.filter(p=>p.dc&&p.dc.readyState==='open');updateConnBadge();
+  if(state.offlineRole==='master'){const names=open.map(p=>esc(p.name?(p.name+(p.instrument?' · '+p.instrument:'')):(p.instrument||'Músico'))).join(', ');setQrStatus(`<b>✓ Tablets enlazadas: ${open.length}</b>${names?' ('+names+')':''}. Toca "Mostrar QR" para sumar otra.`,open.length?'ok':'');}
+}
+async function qrMasterCreateOffer(){
+  if(!window.RTCPeerConnection){setQrStatus('Este navegador no soporta WebRTC.','err');return;}
+  if(state.pendingOffline){try{state.pendingOffline.pc.close();}catch(e){}state.pendingOffline=null;}
+  clearTimeout(state.pendingTimer);setQrStatus('Generando QR…');await grabCameraForIce();
+  const pc=new window.RTCPeerConnection({iceServers:[]});const dc=pc.createDataChannel('atril');state.pendingOffline={pc,dc};pc.oniceconnectionstatechange=()=>{if(pc.iceConnectionState==='failed'&&state.pendingOffline&&state.pendingOffline.pc===pc){clearTimeout(state.pendingTimer);setQrStatus('No se pudo enlazar en esta red. Usa el hotspot del celular.','err');showConnToast('error','Error de red','El router bloquea la conexión entre tablets. Prueba con hotspot.');}};
+  dc.onopen=()=>{clearTimeout(state.pendingTimer);state.pendingOffline=null;registerOfflinePeer(pc,dc);stopQrScanner();$('qrOutputContainer').classList.add('hidden');updateOfflineStatus();showConnToast('success','Conectado','Nueva tablet enlazada sin internet.');try{dc.send(JSON.stringify(buildMasterPayload()));}catch(e){}};
+  try{const offer=await pc.createOffer();await pc.setLocalDescription(offer);await waitForIceComplete(pc,3000);}catch(e){releaseCameraForIce();setQrStatus('No se pudo crear la invitación: '+esc(e.message||e),'err');return;}
+  releaseCameraForIce();
+  const compact=compactFromSdp('o',pc.localDescription.sdp);
+  if(!compact||!/\/\d+/.test(compact.split('|')[5]||'')){setQrStatus('No se detectó la red Wi-Fi/hotspot. Conecta ambas tablets a la misma red.','err');showConnToast('error','Sin red local','Conecta las tablets al mismo Wi-Fi o hotspot.');return;}
+  await renderQrString(compact,'Paso 1 · El músico escanea este QR',true);
+  setQrStatus('Muestra este QR al músico y luego toca "Escanear respuesta".');
+}
+async function handleIncomingQrPayload(raw){
+  const parsed=sdpFromCompact(raw);if(!parsed){setQrStatus('Ese código no es de AtrilSync.','err');return;}
+  if(parsed.type==='offer'){
+    if(!window.RTCPeerConnection){setQrStatus('Este navegador no soporta WebRTC.','err');return;}
+    setQrStatus('Generando respuesta…');if(state.musicianPc){try{state.musicianPc.close();}catch(e){}}
+    const pc=new window.RTCPeerConnection({iceServers:[]});state.musicianPc=pc;
+    pc.ondatachannel=ev=>{const dc=ev.channel;state.musicianDc=dc;
+      dc.onopen=()=>{state.offlineRole='musician';stopQrScanner();$('qrOutputContainer').classList.add('hidden');updateConnBadge();setQrStatus('<b>✓ Conectado al Maestro.</b> Ya puedes cerrar esta ventana.','ok');showConnToast('success','Conectado','Enlazado con el Maestro sin internet.');sendOfflineHello();renderAll();};
+      dc.onmessage=m=>{try{const d=JSON.parse(m.data);if(d&&d.type==='MASTER_STATE_UPDATE')applyMasterState(d);if(d&&/^PDF_(START|CHUNK|END|ERROR)$/.test(d.type))handleIncomingPdfTransferMsg(d);}catch(e){}};
+      dc.onclose=()=>{if(state.musicianDc===dc){state.offlineRole='none';state.masterPdfCatalog={};if(getRole()!=='musician')state.remoteSongs=null;updateConnBadge();setQrStatus('Se perdió la conexión. Vuelve a escanear el QR del Maestro.','err');showConnToast('error','Conexión perdida','Se perdió el enlace con el Maestro.');renderAll();}};};
+    try{await pc.setRemoteDescription(parsed);const ans=await pc.createAnswer();await pc.setLocalDescription(ans);await waitForIceComplete(pc,3000);}catch(e){setQrStatus('No se pudo procesar la invitación: '+esc(e.message||e),'err');return;}
+    const c=compactFromSdp('a',pc.localDescription.sdp);if(!c){setQrStatus('No se pudo generar la respuesta.','err');return;}
+    await renderQrString(c,'Paso 2 · Muestra este QR al Maestro',false);setQrStatus('Muestra este QR al Maestro para terminar.');
+  }else{
+    if(!state.pendingOffline||!state.pendingOffline.pc){setQrStatus('Primero toca "Mostrar QR de invitación".','err');return;}
+    const pc=state.pendingOffline.pc;if(pc.signalingState==='stable'){setQrStatus('Enlace ya procesado. Esperando…');return;}
+    try{await pc.setRemoteDescription(parsed);}catch(e){setQrStatus('Respuesta inválida o vencida. Genera un QR nuevo.','err');showConnToast('error','No se pudo conectar','Respuesta inválida o vencida.');return;}
+    setQrStatus('Finalizando enlace…');clearTimeout(state.pendingTimer);
+    state.pendingTimer=setTimeout(()=>{if(state.pendingOffline){setQrStatus('No se logró enlazar. Prueba con el hotspot del celular si el router bloquea el tráfico entre tablets.','err');showConnToast('error','Tiempo agotado','Prueba usando el hotspot del celular.');}},18000);
+  }
+}
+
+/* ===== Salas en línea (MQTT) ===== */
+const MQ_BROKERS=['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081'];
+const MQ={root:'atrilsync/v2',dir:null,url:'',rooms:{},host:null,join:null,presence:{},hb:null,ticker:null};
+function setP2pStatus(html,tone){const b=$('p2pStatusBox');b.innerHTML=html;b.className='note'+(tone==='ok'?' ok':tone==='err'?' err':'');}
+function slugRoom(n){return String(n).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,32);}
+function pinSuffix(pin,id){if(!pin)return'';let h=5381;const s=pin+'|'+id;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))>>>0;return'-'+h.toString(36);}
+function mqConnect(opts){return new Promise((resolve,reject)=>{ensureLib('mqtt').then(ok=>{if(!ok)return reject(new Error('No se pudo cargar el módulo de salas.'));let i=0;const attempt=()=>{if(i>=MQ_BROKERS.length)return reject(new Error('Ningún servidor respondió.'));const url=MQ_BROKERS[i++];let done=false,client;try{client=window.mqtt.connect(url,Object.assign({clientId:'as_'+Math.random().toString(16).slice(2,10),clean:true,keepalive:20,connectTimeout:6000,reconnectPeriod:0},opts||{}));}catch(e){return attempt();}const fail=()=>{if(done)return;done=true;clearTimeout(timer);try{client.end(true);}catch(e){}attempt();};const timer=setTimeout(fail,7500);client.once('connect',()=>{if(done)return;done=true;clearTimeout(timer);client.options.reconnectPeriod=3000;client.on('error',()=>{});resolve({client,url});});client.once('error',fail);client.once('close',()=>{if(!done)fail();});};attempt();});});}
+function onDirMessage(topic,payload,packet){const prefix=MQ.root+'/dir/';if(topic.indexOf(prefix)!==0)return;const id=topic.slice(prefix.length),txt=payload.toString();if(!txt){delete MQ.rooms[id];renderRoomList();return;}try{const d=JSON.parse(txt);d.id=id;d.seen=Date.now();d.stale=!!(packet&&packet.retain)&&Math.abs(Date.now()-(d.ts||0))>90000;MQ.rooms[id]=d;}catch(e){}renderRoomList();}
+async function mqStartDiscovery(force){
+  if(MQ.dir&&MQ.dir.connected&&!force){renderRoomList();return true;}
+  if(MQ.dir){try{MQ.dir.end(true);}catch(e){}MQ.dir=null;}
+  MQ.rooms={};setP2pStatus('Conectando al servidor de salas…');renderRoomList();
+  try{const{client,url}=await mqConnect();MQ.dir=client;MQ.url=url;client.on('message',onDirMessage);client.on('close',renderRoomList);client.subscribe(MQ.root+'/dir/+');setP2pStatus('Servidor conectado. Buscando salas…','ok');if(!MQ.ticker)MQ.ticker=setInterval(renderRoomList,5000);renderRoomList();return true;}
+  catch(e){setP2pStatus(esc(e.message),'err');renderRoomList();return false;}
+}
+function renderRoomList(){
+  const list=$('roomList');if(!list)return;const now=Date.now();
+  const rooms=Object.values(MQ.rooms).filter(r=>now-r.seen<45000).sort((a,b)=>(a.section||'').localeCompare(b.section||'')||(a.name||'').localeCompare(b.name||''));
+  list.innerHTML='';
+  if(!MQ.dir||!MQ.dir.connected){list.innerHTML='<div class="row muted">Sin conexión al servidor de salas.</div>';return;}
+  if(!rooms.length){list.innerHTML='<div class="row muted">No hay salas activas ahora.</div>';return;}
+  rooms.forEach(r=>{const joined=MQ.join&&MQ.join.id===r.id;const row=document.createElement('div');row.className='room'+(r.stale?' stale':'');row.style.opacity=r.stale?.6:1;
+    row.innerHTML=`<div class="song-main"><div class="t">${esc(r.name)} ${r.lock?'🔒':''}</div><div class="s">${esc(r.section||'General')}${r.now?' · '+esc(r.now):''}${r.n?' · '+esc(r.n)+' músicos':''}</div></div><button data-room="${esc(r.id)}" class="btn sm btn-join-room ${joined?'':'primary'}">${joined?'Conectado':'Unirse'}</button>`;list.appendChild(row);});
+}
+function updateHostInfo(){const b=$('hostInfo');if(!MQ.host){b.classList.add('hidden');return;}const insts=Object.values(MQ.presence).map(p=>esc(p.n?(p.n+(p.i?' · '+p.i:'')):(p.i||'Músico')));b.classList.remove('hidden');b.innerHTML=`Sala <b>${esc(MQ.host.name)}</b> activa · Conectados: <b>${insts.length}</b>${insts.length?' ('+insts.join(', ')+')':''}`;}
+function updateJoinInfo(){const b=$('joinInfo');if(!MQ.join){b.classList.add('hidden');return;}b.classList.remove('hidden');b.innerHTML=`Conectado a <b>${esc(MQ.join.name)}</b> ${MQ.join.got?'· recibiendo señal':'· esperando al Maestro…'}<div style="margin-top:6px"><button id="btnLeaveRoom" class="btn sm danger">Salir de la sala</button></div>`;$('btnLeaveRoom').addEventListener('click',mqLeaveRoom);}
+function mqPublishDir(){const h=MQ.host;if(!h||!h.client.connected)return;const song=getActiveSongs()[state.currentSongIndex];try{h.client.publish(MQ.root+'/dir/'+h.id,JSON.stringify({name:h.name,section:h.section,lock:h.lock,owner:h.owner,now:song?song.title+' · pág. '+state.currentPage:'',n:Object.keys(MQ.presence).length,ts:Date.now()}),{qos:0,retain:true});}catch(e){}}
+function mqPublishState(payload){const h=MQ.host;if(!h||!h.client.connected)return;try{h.client.publish(h.base+'/state',JSON.stringify(payload||buildMasterPayload()),{qos:1,retain:true});}catch(e){}}
+function mqUpdatePresence(){const j=MQ.join;if(!j||!j.client.connected)return;try{j.client.publish(j.base+'/presence/'+j.cid,JSON.stringify({n:state.userName,i:state.myInstrument,ts:Date.now()}),{qos:0,retain:true});}catch(e){}}
+async function mqCreateRoom(){
+  const nameRaw=$('inputRoomName').value.trim();if(!nameRaw){setP2pStatus('Escribe un nombre para la sala.','err');return;}
+  const id=slugRoom(nameRaw);if(!id){setP2pStatus('Usa letras o números.','err');return;}
+  const section=$('selectRoomSection').value,pin=$('inputRoomPin').value.trim();
+  try{localStorage.setItem('atrilsync_room_prefs',JSON.stringify({name:nameRaw,section}));}catch(e){}
+  if(MQ.host)await mqCloseRoom();if(MQ.join)await mqLeaveRoom();
+  setP2pStatus('Creando sala…');const okDir=await mqStartDiscovery(false);if(!okDir)return;await sleep(900);
+  try{
+    const{client}=await mqConnect({will:{topic:MQ.root+'/dir/'+id,payload:'',qos:0,retain:true}});
+    const base=MQ.root+'/r/'+id+pinSuffix(pin,id);MQ.host={client,id,name:nameRaw,section,lock:!!pin,base,owner:client.options.clientId};MQ.presence={};
+    client.on('message',(t,p)=>{
+      if(t===base+'/req'){try{const req=JSON.parse(p.toString());if(req&&req.type==='REQ_PDF'&&req.clientId)handleMasterPdfRequest(req,async out=>{if(client.connected){client.publish(base+'/pdf/'+req.clientId,JSON.stringify(out),{qos:1});await sleep(0);}});}catch(e){}return;}
+      if(t.indexOf(base+'/presence/')!==0)return;const cid=t.split('/').pop(),txt=p.toString();
+      if(!txt)delete MQ.presence[cid];else{try{MQ.presence[cid]=JSON.parse(txt);}catch(e){}}
+      updateHostInfo();updateConnBadge();
+    });
+    client.subscribe(base+'/presence/+');client.subscribe(base+'/req');client.on('connect',()=>{mqPublishDir();mqPublishState();});
+    mqPublishDir();mqPublishState();clearInterval(MQ.hb);MQ.hb=setInterval(mqPublishDir,12000);
+    state.onlineRole='master';updateHostInfo();updateConnBadge();setP2pStatus('✓ Sala <b>'+esc(nameRaw)+'</b> activa.','ok');showConnToast('success','Sala creada','"'+nameRaw+'" lista para recibir músicos.');
+  }catch(e){MQ.host=null;setP2pStatus('No se pudo crear: '+esc(e.message),'err');showConnToast('error','Error al crear sala',e.message||'No se pudo conectar.');}
+}
+async function mqCloseRoom(){const h=MQ.host;if(!h)return;clearInterval(MQ.hb);try{h.client.publish(MQ.root+'/dir/'+h.id,'',{qos:0,retain:true});h.client.publish(h.base+'/state','',{qos:0,retain:true});}catch(e){}await sleep(200);try{h.client.end(true);}catch(e){}MQ.host=null;MQ.presence={};if(state.onlineRole==='master')state.onlineRole='none';updateHostInfo();updateConnBadge();setP2pStatus('Sala cerrada.');}
+async function mqJoinRoom(id){
+  const room=MQ.rooms[id];if(!room)return;const pin=$('inputJoinPin').value.trim();
+  if(room.lock&&!pin){setP2pStatus('Esta sala pide PIN.','err');showConnToast('error','Falta el PIN','Escribe el PIN de la sala para entrar.');return;}
+  if(MQ.host)await mqCloseRoom();if(MQ.join)await mqLeaveRoom();
+  setP2pStatus('Conectando a <b>'+esc(room.name)+'</b>…');
+  const base=MQ.root+'/r/'+id+pinSuffix(room.lock?pin:'',id),cid='as_'+Math.random().toString(16).slice(2,10);
+  try{
+    const{client}=await mqConnect({clientId:cid,will:{topic:base+'/presence/'+cid,payload:'',qos:0,retain:true}});
+    MQ.join={client,id,name:room.name,base,cid,got:false};
+    client.on('message',(t,p)=>{if(t===base+'/pdf/'+cid){try{handleIncomingPdfTransferMsg(JSON.parse(p.toString()));}catch(e){}return;}if(t!==base+'/state')return;const txt=p.toString();if(!txt)return;try{const d=JSON.parse(txt);if(MQ.join)MQ.join.got=true;applyMasterState(d);updateJoinInfo();}catch(e){}});
+    client.subscribe(base+'/state',{qos:1});client.subscribe(base+'/pdf/'+cid,{qos:1});client.on('connect',mqUpdatePresence);mqUpdatePresence();
+    state.onlineRole='musician';updateConnBadge();updateJoinInfo();renderRoomList();renderAll();setP2pStatus('✓ Conectado a <b>'+esc(room.name)+'</b>.','ok');showConnToast('success','Conectado','Sala "'+room.name+'".');
+  }catch(e){MQ.join=null;setP2pStatus('No se pudo unir: '+esc(e.message),'err');showConnToast('error','Error de conexión',e.message||'No se pudo unir a la sala.');}
+}
+async function mqLeaveRoom(){const j=MQ.join;if(!j)return;try{j.client.publish(j.base+'/presence/'+j.cid,'',{qos:0,retain:true});}catch(e){}await sleep(150);try{j.client.end(true);}catch(e){}MQ.join=null;if(state.onlineRole==='musician')state.onlineRole='none';state.masterPdfCatalog={};if(getRole()!=='musician')state.remoteSongs=null;updateJoinInfo();updateConnBadge();renderRoomList();setP2pStatus('Saliste de la sala.');renderAll();}
+
+/* ===== Visor PDF ===== */
+let pdfRenderSeq=0,currentRenderTask=null,renderedZoom=1,lastViewKey='';
+const pdfDocCache={};
+async function getPdfDoc(key,file){const c=pdfDocCache[key];if(c&&c.file===file)return c.doc;if(c&&c.doc){try{c.doc.destroy();}catch(e){}}const buf=await file.arrayBuffer();const doc=await window.pdfjsLib.getDocument({data:buf}).promise;pdfDocCache[key]={file,doc};return doc;}
+async function detectMetaFromPdfFile(key,file){
+  if(!file||!window.pdfjsLib)return null;
+  try{const doc=await getPdfDoc(key,file);const page=await doc.getPage(1);const tc=await page.getTextContent();const text=(tc.items||[]).map(i=>i.str||'').join(' ').replace(/\s+/g,' ').trim();if(!text)return{key:null,bpm:null,hasText:false};
+    let bpm=null;const bm=text.match(/(?:tempo|bpm|♩)\s*[:=]?\s*(\d{2,3})\b|\b(\d{2,3})\s*bpm\b/i);if(bm){const v=parseInt(bm[1]||bm[2],10);if(v>=40&&v<=240)bpm=v;}
+    let k=null;const em=text.match(/(?:tono|tonalidad|key)\s*[:=]\s*([A-G][#b♭♯]?m?(?:\s*(?:mayor|menor|maj|min))?|(?:Do|Re|Mi|Fa|Sol|La|Si)\s*[#b♭♯]?(?:\s*(?:Mayor|Menor|m))?)/i);if(em)k=em[1].trim();
+    return{key:k,bpm,hasText:true};}catch(e){return null;}
+}
+function showEmpty(kind,song,inst){
+  $('pdfRenderCanvas').classList.add('hidden');const el=$('emptyState');el.classList.remove('hidden');
+  const canEdit=state.appRole!=='musician';
+  if(kind==='nosongs')el.innerHTML=`<div class="big">🎼</div><h3>Aún no hay partituras</h3><p>${canEdit?'Carga tus PDFs y la app arma el repertorio por ti.':'Conéctate al Maestro o carga tus propios PDFs.'}</p><button class="btn primary" data-open="sLoad">Cargar PDFs</button>${state.appRole==='musician'?'<button class="btn" data-open="sConn">Conectar al Maestro</button>':''}`;
+  else if(kind==='nolib')el.innerHTML=`<div class="big">📡</div><h3>Falta el lector de PDF</h3><p>Abre la app con internet una vez para guardarlo y usarla sin conexión.</p>`;
+  else el.innerHTML=`<div class="big">📄</div><h3>Falta tu partitura</h3><p>No hay PDF de <b>${esc(inst)}</b> para “${esc(song.title)}”.</p><button class="btn primary" data-act="upload">Subir PDF</button><button class="btn" data-open="sInstrument">Cambiar instrumento</button>`;
+}
+async function renderPdf(song,inst,pageNum){
+  const seq=++pdfRenderSeq,key=`${song.code}|${inst}`,file=state.uploadedPdfs[key]||state.onlineTempPdfs[key],canvas=$('pdfRenderCanvas');
+  if(!file){showEmpty('nopdf',song,inst);return;}
+  if(!window.pdfjsLib){showEmpty('nolib');return;}
+  try{
+    const doc=await getPdfDoc(key,file);if(seq!==pdfRenderSeq)return;
+    if(state.pdfPages[key]!==doc.numPages){state.pdfPages[key]=doc.numPages;if(state.currentPage>doc.numPages)state.currentPage=doc.numPages;updatePageLabels(song);}
+    const safe=Math.min(Math.max(1,pageNum),doc.numPages),page=await doc.getPage(safe);if(seq!==pdfRenderSeq)return;
+    const base=page.getViewport({scale:1}),surf=$('surface');
+    const fit=Math.min((surf.clientWidth-16)/base.width,(surf.clientHeight-16)/base.height);
+    const css=Math.max(.1,fit)*state.zoomLevel,dpr=Math.min(window.devicePixelRatio||1,2),vp=page.getViewport({scale:css*dpr});
+    const off=document.createElement('canvas');off.width=Math.floor(vp.width);off.height=Math.floor(vp.height);
+    if(currentRenderTask){try{currentRenderTask.cancel();}catch(e){}}
+    currentRenderTask=page.render({canvasContext:off.getContext('2d'),viewport:vp});await currentRenderTask.promise;if(seq!==pdfRenderSeq)return;
+    canvas.width=off.width;canvas.height=off.height;canvas.getContext('2d').drawImage(off,0,0);
+    canvas.style.width=Math.floor(vp.width/dpr)+'px';canvas.style.height=Math.floor(vp.height/dpr)+'px';
+    renderedZoom=state.zoomLevel;$('zoomWrap').style.transform='none';
+    $('emptyState').classList.add('hidden');canvas.classList.remove('hidden');
+    const vk=key+'|'+safe;if(vk!==lastViewKey){lastViewKey=vk;surf.scrollTo(0,0);}
+  }catch(err){
+    if(err&&err.name==='RenderingCancelledException')return;if(seq!==pdfRenderSeq)return;
+    canvas.classList.add('hidden');const el=$('emptyState');el.classList.remove('hidden');el.innerHTML='<div class="big">⚠️</div><h3>No se pudo abrir el PDF</h3><p>El archivo puede estar dañado. Prueba subirlo de nuevo.</p><button class="btn primary" data-act="upload">Subir otro PDF</button>';
+  }
+}
+function updatePageLabels(song){if(!song)return;const pages=getPages(song);$('pageLbl').textContent=`${state.currentPage} / ${pages}`;$('zenBadge').textContent=`${state.currentPage} / ${pages}`;}
+function renderHeader(){
+  const songs=getActiveSongs(),song=songs[state.currentSongIndex];
+  $('curTitle').textContent=song?song.title:'AtrilSync';
+  $('curSub').textContent=song?`${state.currentSongIndex+1} de ${songs.length} · ${song.key} · ${song.bpm} BPM${state.appRole==='master'&&window.innerWidth<720&&state.masterMobileTab==='score'?' · Volver a lista ▾':' ▾'}`:'Toca para elegir canción ▾';
+  $('instText').textContent=state.myInstrument;
+}
+function renderActiveViewer(){
+  const songs=getActiveSongs();if(state.currentSongIndex>=songs.length)state.currentSongIndex=Math.max(0,songs.length-1);
+  const song=songs[state.currentSongIndex];renderHeader();
+  const cue=$('stageCueBanner');if(state.activeCue){cue.textContent=state.activeCue;cue.classList.remove('hidden');}else cue.classList.add('hidden');
+  $('pdfRenderCanvas').classList.toggle('night',state.invertColors);
+  const bar=$('remoteBar');
+  if(!song){updatePageLabels({code:'',pages:1});showEmpty('nosongs');bar.classList.add('hidden');return;}
+  updatePageLabels(song);
+  const inst=state.myInstrument,curKey=`${song.code}|${inst}`,hasLocal=!!state.uploadedPdfs[curKey],hasTemp=!!state.onlineTempPdfs[curKey],meta=state.masterPdfCatalog[curKey];
+  const connected=getRole()==='musician'&&(state.offlineRole==='musician'||state.onlineRole==='musician');
+  if(!state.zenMode&&connected&&!hasLocal&&meta){
+    const kb=Math.max(1,Math.round((meta.size||0)/1024));
+    $('remotePdfInfoText').textContent=(hasTemp?'Viendo en línea · ':'En el Maestro · ')+kb+' KB';
+    $('btnRemoteViewPdf').classList.toggle('hidden',hasTemp);bar.classList.remove('hidden');
+    if(!hasTemp&&state.autoStreamPdf){const prog=$('remotePdfProgress');prog.textContent='Cargando…';prog.classList.remove('hidden');requestPdfFromMaster(curKey,'view',(rx,tot)=>{prog.textContent=Math.round(rx/tot*100)+'%';}).then(()=>prog.classList.add('hidden')).catch(()=>prog.classList.add('hidden'));}
+  }else bar.classList.add('hidden');
+  if(state.metronomeOn&&state.metronomeSong!==song.code){stopMetronome();startMetronome();}
+  renderPdf(song,inst,state.currentPage);
+}
+function applyZoomPreview(){$('zoomWrap').style.transform=`scale(${state.zoomLevel/renderedZoom})`;$('zVal').textContent=Math.round(state.zoomLevel*100)+'%';}
+function applyRole(){
+  const r=state.appRole;
+  const isMaster=r==='master'&&!state.zenMode;
+  $('masterPane').classList.toggle('hidden',!isMaster);
+  document.body.classList.toggle('master-list',isMaster&&state.masterMobileTab==='list');
+  document.body.classList.toggle('master-score',isMaster&&state.masterMobileTab==='score');
+  document.querySelectorAll('[data-for]').forEach(el=>el.classList.toggle('hidden',!el.dataset.for.split(' ').includes(r)));
+  const rLbl=r==='master'?'Maestro':r==='musician'?'Músico':'Solo';$('modeVal').textContent=state.userName?`${state.userName} · ${rLbl}`:rLbl;
+  $('zVal').textContent=Math.round(state.zoomLevel*100)+'%';
+  $('swNight').checked=state.invertColors;$('swSync').checked=state.syncMasterPage;$('chkAutoStreamPdf').checked=state.autoStreamPdf;$('swMetro').checked=state.metronomeOn;
+  $('offlineVal').textContent=state.offlineReady?'✓ Disponible sin internet':'';
+}
+function moveSong(idx,delta){
+  const songs=getActiveSongs(),to=idx+delta;if(to<0||to>=songs.length)return;
+  const cur=songs[state.currentSongIndex];
+  const [moved]=songs.splice(idx,1);songs.splice(to,0,moved);
+  if(cur)state.currentSongIndex=songs.indexOf(cur);
+  saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();
+}
+function renderGenreBars(songs){
+  const used=new Set(songs.map(s=>s.genre||'Sin género'));
+  [$('genreShortcutBar'),$('masterGenreBar')].forEach(bar=>{
+    if(!bar)return;bar.innerHTML='';
+    if(used.size<2){bar.classList.add('hidden');if(state.selectedGenre!=='Todos')state.selectedGenre='Todos';return;}
+    bar.classList.remove('hidden');
+    GENRES.forEach(g=>{const count=g==='Todos'?songs.length:songs.filter(x=>(x.genre||'Sin género')===g).length;if(g!=='Todos'&&!count)return;const b=document.createElement('button');b.className='chip'+(state.selectedGenre===g?' on':'');b.textContent=`${g} ${count}`;b.addEventListener('click',()=>{state.selectedGenre=g;renderSetlist();});bar.appendChild(b);});
+  });
+}
+function pdfTag(code){const k=`${code}|${state.myInstrument}`;if(state.uploadedPdfs[k])return['PDF','green'];if(state.onlineTempPdfs[k])return['En línea','blue'];if(state.masterPdfCatalog[k])return['En Maestro','gold'];return['Sin PDF',''];}
+function fillSongList(c,songs,q,isMasterSide){
+  if(!c)return;c.innerHTML='';
+  if(!songs.length){c.innerHTML='<div class="row muted" style="justify-content:center;text-align:center">Repertorio vacío. Usa "+ Canción", "Lista base" o "Cargar PDFs".</div>';return;}
+  let shown=0;const canEdit=state.appRole!=='musician';
+  songs.forEach((song,idx)=>{
+    const g=song.genre||'Sin género';if(state.selectedGenre!=='Todos'&&g!==state.selectedGenre)return;
+    if(q&&!(song.code.toLowerCase().includes(q)||song.title.toLowerCase().includes(q)||String(song.key).toLowerCase().includes(q)))return;
+    shown++;const sel=idx===state.currentSongIndex,[tx,cl]=pdfTag(song.code);
+    const row=document.createElement('div');row.className='row'+(sel?' sel':'');if(isMasterSide){row.style.borderRadius='12px';row.style.background=sel?'rgba(229,184,105,.18)':'var(--card2)';row.style.border='1px solid '+(sel?'var(--accent)':'transparent');}
+    row.setAttribute('role','button');row.tabIndex=0;
+    const controls=canEdit?`<button class="icon sm" data-up aria-label="Subir" ${idx===0?'disabled style="opacity:.25"':''}>↑</button><button class="icon sm" data-down aria-label="Bajar" ${idx===songs.length-1?'disabled style="opacity:.25"':''}>↓</button><button class="icon sm" data-edit aria-label="Editar">✎</button>`:'';
+    row.innerHTML=`<div class="song-main"><div class="t">${idx+1}. ${esc(song.title)}</div><div class="s">${esc(song.key)} · ${esc(song.bpm)} BPM · ${esc(g)}</div></div><span class="tag ${cl}">${tx}</span>${controls}`;
+    const pick=()=>{state.currentSongIndex=idx;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();if(!isMasterSide)closeSheet('sRepertoire');renderAll();};
+    row.addEventListener('click',pick);row.addEventListener('keydown',e=>{if(e.key==='Enter')pick();});
+    const up=row.querySelector('[data-up]');if(up)up.addEventListener('click',e=>{e.stopPropagation();moveSong(idx,-1);});
+    const dn=row.querySelector('[data-down]');if(dn)dn.addEventListener('click',e=>{e.stopPropagation();moveSong(idx,1);});
+    const eb=row.querySelector('[data-edit]');if(eb)eb.addEventListener('click',e=>{e.stopPropagation();openSongSheet(idx);});
+    c.appendChild(row);
+  });
+  if(!shown)c.innerHTML='<div class="row muted" style="justify-content:center">Sin resultados.</div>';
+}
+function renderSetlist(){
+  const songs=getActiveSongs(),q=state.searchQuery.trim().toLowerCase();
+  renderGenreBars(songs);
+  fillSongList($('setlistContainer'),songs,q,false);
+  if(state.appRole==='master')fillSongList($('masterSetlistContainer'),songs,q,true);
+}
+function renderScenes(){[$('selectScene'),$('selectMasterScene')].forEach(s=>{if(!s)return;s.innerHTML='';state.scenes.forEach(sc=>{const o=document.createElement('option');o.value=sc.id;o.textContent=sc.name;if(sc.id===state.currentSceneId)o.selected=true;s.appendChild(o);});});}
+function renderInstrumentPicker(){const l=$('instList');l.innerHTML='';INSTRUMENTS.forEach(inst=>{const b=document.createElement('button');b.className='row';b.innerHTML=`<span>${esc(inst)}</span><span style="color:var(--accent);font-weight:700">${inst===state.myInstrument?'✓':''}</span>`;b.addEventListener('click',()=>{state.myInstrument=inst;saveAppState();onInstrumentChanged();closeSheet('sInstrument');renderAll();});l.appendChild(b);});}
+function onInstrumentChanged(){mqUpdatePresence();sendOfflineHello();}
+function renderAll(){applyRole();updateConnBadge();renderHeader();renderActiveViewer();if(state.appRole==='master'||sheetStack.includes('sRepertoire')){renderScenes();renderSetlist();}}
+function setZen(v){state.zenMode=v;document.body.classList.toggle('zen',v);renderAll();}
+
+/* ===== Navegación ===== */
+function nextPageAction(b){const songs=getActiveSongs(),song=songs[state.currentSongIndex];if(!song)return;if(state.currentPage<getPages(song))state.currentPage++;else if(state.currentSongIndex<songs.length-1){state.currentSongIndex++;state.currentPage=1;}saveAppState();if(b)broadcastMasterSignal();renderAll();}
+function prevPageAction(b){const songs=getActiveSongs();if(state.currentPage>1)state.currentPage--;else if(state.currentSongIndex>0){state.currentSongIndex--;const p=songs[state.currentSongIndex];state.currentPage=p?getPages(p):1;}saveAppState();if(b)broadcastMasterSignal();renderAll();}
+function nextSongAction(b){const songs=getActiveSongs();if(state.currentSongIndex<songs.length-1){state.currentSongIndex++;state.currentPage=1;saveAppState();if(b)broadcastMasterSignal();renderAll();}}
+function prevSongAction(b){if(state.currentSongIndex>0){state.currentSongIndex--;state.currentPage=1;saveAppState();if(b)broadcastMasterSignal();renderAll();}}
+
+/* ===== Metrónomo (programado con el reloj de audio) ===== */
+function startMetronome(){
+  const song=getActiveSongs()[state.currentSongIndex],bpm=(song&&song.bpm)?song.bpm:120;
+  if(!state.audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(AC)state.audioCtx=new AC();}
+  const ctx=state.audioCtx;if(!ctx)return;if(ctx.state==='suspended')ctx.resume();
+  state.metronomeOn=true;state.metronomeSong=song?song.code:null;$('metroVal').textContent='· '+bpm+' BPM';$('swMetro').checked=true;
+  clearInterval(state.metronomeTimer);const iv=60/bpm;let next=ctx.currentTime+.05,beat=0;
+  const click=(t,acc)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(acc?1320:880,t);g.gain.setValueAtTime(.2,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+.06);};
+  state.metronomeTimer=setInterval(()=>{while(next<ctx.currentTime+.12){click(next,beat%4===0);beat++;next+=iv;}},25);
+}
+function stopMetronome(){state.metronomeOn=false;clearInterval(state.metronomeTimer);$('metroVal').textContent='';$('swMetro').checked=false;}
+let wakeLock=null;
+async function requestWakeLock(){try{if('wakeLock' in navigator&&!wakeLock){wakeLock=await navigator.wakeLock.request('screen');wakeLock.addEventListener('release',()=>{wakeLock=null;});}}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')requestWakeLock();});
+
+/* ===== Hojas (sheets) ===== */
+const sheetStack=[];
+function syncSheetBackdrop(){const bd=$('backdrop');if(!sheetStack.length){bd.classList.remove('open');bd.style.zIndex=60;return;}bd.classList.add('open');bd.style.zIndex=60+sheetStack.length*2-1;sheetStack.forEach((sid,idx)=>{const s=$(sid);if(s)s.style.zIndex=60+(idx+1)*2;});}
+function openSheet(id){const el=$(id);if(!el||sheetStack.includes(id))return;sheetStack.push(id);el.classList.add('open');syncSheetBackdrop();
+  if(id==='sRepertoire'){renderScenes();renderSetlist();}else if(id==='sInstrument')renderInstrumentPicker();else if(id==='sRouting')window.renderRoutingModal();else if(id==='sGenres')window.renderGenreAssignList();else if(id==='sLibrary'){$('selectMusicianLibInstrument').value=state.myInstrument;window.renderMusicianLibModal();}else if(id==='sMenu')applyRole();else if(id==='sConn'){applyRole();updateOfflineStatus();}else if(id==='sLoad'){$('selectBatchInstrument').value='AUTO';if(!state.isImporting){$('batchImportProgressBox').classList.add('hidden');$('batchImportFeedback').classList.add('hidden');}}}
+function closeSheet(id){if(id==='sLoad'&&state.isImporting)return;const i=sheetStack.indexOf(id);if(i<0)return;sheetStack.splice(i,1);$(id).classList.remove('open');syncSheetBackdrop();if(id==='sConn')stopQrScanner();}
+function closeTop(){if(sheetStack.length)closeSheet(sheetStack[sheetStack.length-1]);}
+
+/* ===== Edición de canciones ===== */
+let editingSongIdx=null;
+function openSongSheet(idx){
+  const songs=getActiveSongs();editingSongIdx=(typeof idx==='number'&&songs[idx])?idx:null;const s=editingSongIdx!==null?songs[editingSongIdx]:null;
+  $('modalSongFormTitle').textContent=s?'Editar canción':'Nueva canción';$('btnSaveNewSong').textContent=s?'Guardar cambios':'Guardar canción';$('btnDeleteSong').classList.toggle('hidden',!s);
+  $('inputNewSongId').value=s?s.code:`Canción ${songs.length+1}`;$('inputNewSongTitle').value=s?s.title:'';$('inputNewSongKey').value=s?s.key:'Do Menor (Cm)';$('inputNewSongBpm').value=s?s.bpm:120;
+  $('selectNewSongGenre').value=s&&ASSIGNABLE_GENRES.includes(s.genre)?s.genre:'Sin género';$('songDetectFeedback').classList.add('hidden');openSheet('sSong');
+}
+
+/* ===== Importación ===== */
+const normSongKey=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+function matchInstrumentAlias(raw){
+  const n=normSongKey(raw);if(!n)return null;
+  for(const inst of INSTRUMENTS)if(n===normSongKey(inst))return inst;
+  if(/^(?:tpt|tp|tromp|trompeta|1ra|primera)*(?:1|i)$/.test(n)&&/tpt|tp|tromp|primera|1ra/.test(n))return'Trompeta 1';
+  if(/^(?:tpt|tp|tromp|trompeta|2da|segunda)*(?:2|ii)$/.test(n)&&/tpt|tp|tromp|segunda|2da/.test(n))return'Trompeta 2';
+  if(/^(?:tpt|tp|tromp|trompeta|3ra|tercera)*(?:3|iii)$/.test(n)&&/tpt|tp|tromp|tercera|3ra/.test(n))return'Trompeta 3';
+  if(/^(?:sax|saxo|saxofon|altosax|sax1)$/.test(n)||/^(?:sax|saxo|saxofon)alto$/.test(n)||/^altosax(?:o|ofon)?$/.test(n))return'Saxo Alto';
+  if(/^(?:sax|saxo|saxofon)tenor$/.test(n)||/^tenorsax(?:o|ofon)?$/.test(n)||n==='sax2')return'Saxo Tenor';
+  if(/^(piano|teclado|keys)$/.test(n))return'Piano';if(/^(bajo|bass)$/.test(n))return'Bajo';if(/^(guitarra|guitar|gtr)$/.test(n))return'Guitarra';if(/^(percusion|perc|bateria|timbal|congas)$/.test(n))return'Percusión';
+  return null;
+}
+function cleanSongTitle(raw){
+  let s=String(raw||'').replace(/\.pdf$/i,'').trim();
+  s=s.replace(/\s*[\(\[]\s*(?:\d+|copia|copy)\s*[\)\]]\s*$/gi,'').trim();
+  s=s.replace(/\s*\(\s*(?:tripu|tripulacion|tripulación|nenes|20\d{2})\s*\)/gi,' ');
+  s=s.replace(/\s+(?:tripu|tripulacion|tripulación|nenes)(?:\s+20\d{2})?\s*$/gi,'');
+  s=s.replace(/^[\s,._\-]+|[\s,._\-]+$/g,'').replace(/\s{2,}/g,' ').trim();
+  if(s&&s===s.toLowerCase())s=s.replace(/(^|\s)([a-záéíóúñ])/g,(_,sp,ch)=>sp+ch.toUpperCase());
+  return s||'Sin título';
+}
+function parseSongAndInstrument(filename,relPath){
+  let clean=String(filename||'').replace(/\.pdf$/i,'').trim().replace(/\s*[\(\[]\s*(?:\d+|copia|copy)\s*[\)\]]\s*$/gi,'').trim();let det=null,folderInst=null;
+  if(relPath&&relPath.includes('/')){const dirs=relPath.split('/').slice(0,-1);for(let i=dirs.length-1;i>=0;i--){const c=matchInstrumentAlias(dirs[i]);if(c){folderInst=c;break;}}}
+  const pm=clean.match(/\(([^)]+)\)/g);if(pm)for(let i=pm.length-1;i>=0;i--){const c=matchInstrumentAlias(pm[i].slice(1,-1));if(c){det=c;clean=clean.replace(pm[i],' ').trim();break;}}
+  if(!det){const m=clean.match(/^(.+?)[\s]*[-_,\.][\s]*([^-_,\.]+)$/);if(m){const c=matchInstrumentAlias(m[2]);if(c){clean=m[1].trim();det=c;}}}
+  if(!det){const m=clean.match(/^([^-_,\.]+)[\s]*[-_,\.][\s]*(.+)$/);if(m){const c=matchInstrumentAlias(m[1]);if(c){clean=m[2].trim();det=c;}}}
+  if(!det){const m=clean.match(/^(.+?)\s+((?:trompeta|tpt|tp)\s*[123i]{1,3}|(?:saxo?|saxof[oó]n)\s*(?:alto|tenor)|piano|teclado|bajo|guitarra|percusi[oó]n)(?:\s+(?:tripu|tripulaci[oó]n|20\d{2}))*$/i);if(m){const c=matchInstrumentAlias(m[2]);if(c){clean=m[1].trim();det=c;}}}
+  return{songCode:cleanSongTitle(clean),detectedInst:det||folderInst};
+}
+function findMatchingSong(list,code){
+  const t=normSongKey(code);if(!t)return null;let m=list.find(s=>normSongKey(s.code)===t||normSongKey(s.title)===t);
+  if(!m&&t.length>=4){const f=list.filter(s=>{const n=normSongKey(s.code);return n.length>=4&&(n.includes(t)||t.includes(n));});if(f.length===1)m=f[0];}
+  return m||null;
+}
+const newSong=(code,extra)=>Object.assign({id:'s_'+Date.now()+'_'+Math.floor(Math.random()*1e6),code,title:code,key:'Do Mayor',bpm:120,pages:1,genre:detectGenreFromName(code)},extra||{});
+function dropPdfCaches(key){delete state.pdfPages[key];if(pdfDocCache[key]){try{pdfDocCache[key].doc.destroy();}catch(e){}delete pdfDocCache[key];}}
+
+/* ===== Arranque ===== */
+function initAtrilSyncApp(){
+  loadAppState();restorePdfsFromDb();
+  const instOpts=INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('');
+  $('selectBatchInstrument').innerHTML='<option value="AUTO">Detectar por el nombre del archivo</option>'+INSTRUMENTS.map(i=>`<option value="${i}">Todos son de ${i}</option>`).join('');
+  $('selectMusicianLibInstrument').innerHTML=instOpts;
+  $('selectProfileInstrument').innerHTML=instOpts;
+  $('inputProfileName').value=state.userName||'';
+  $('selectProfileInstrument').value=state.myInstrument;
+  const gOpts=ASSIGNABLE_GENRES.map(g=>`<option value="${g}">${g}</option>`).join('');$('selectNewSongGenre').innerHTML=gOpts;$('selectBulkGenre').innerHTML=gOpts;
+  try{const p=JSON.parse(localStorage.getItem('atrilsync_room_prefs')||'null');if(p){$('inputRoomName').value=p.name||'';if(p.section)$('selectRoomSection').value=p.section;}}catch(e){}
+  setTimeout(()=>{ensureLib('QRCode');ensureLib('jsQR');ensureLib('mqtt');},2500);
+  document.addEventListener('pointerdown',requestWakeLock,{once:true});
+
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(async()=>{await sleep(2500);try{const hit=await caches.match('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js');state.offlineReady=!!hit;applyRole();}catch(e){}}).catch(()=>{});}
+
+  const chooseRole=r=>{state.userName=$('inputProfileName').value.trim();state.myInstrument=$('selectProfileInstrument').value||state.myInstrument;state.appRole=r;state.hasChosenRole=true;$('welcome').classList.add('hidden');saveAppState();onInstrumentChanged();renderAll();if(!localStorage.getItem('atril_hint_seen')){try{localStorage.setItem('atril_hint_seen','1');}catch(e){}const h=$('hint');h.classList.remove('hidden');setTimeout(()=>h.classList.add('hidden'),7000);}};
+  $('btnStartAsMasterMode').addEventListener('click',()=>chooseRole('master'));
+  $('btnStartAsMusicianMode').addEventListener('click',()=>chooseRole('musician'));
+  $('btnStartAsSoloMode').addEventListener('click',()=>chooseRole('solo'));
+  if(state.hasChosenRole)$('welcome').classList.add('hidden');
+  $('btnChangeMode').addEventListener('click',()=>{closeSheet('sMenu');$('inputProfileName').value=state.userName||'';$('selectProfileInstrument').value=state.myInstrument;$('welcome').classList.remove('hidden');});
+
+  /* delegación: abrir/cerrar hojas y acciones */
+  document.addEventListener('click',e=>{
+    const o=e.target.closest('[data-open]');
+    if(o){const from=o.closest('.sheet');if(from&&from.id==='sMenu')closeSheet('sMenu');openSheet(o.dataset.open);return;}
+    const c=e.target.closest('[data-close]');if(c){const sh=c.closest('.sheet');if(sh)closeSheet(sh.id);return;}
+    if(e.target.closest('[data-act="upload"]'))$('inputSinglePdfFile').click();
+  });
+  $('backdrop').addEventListener('click',closeTop);
+  $('btnRepertoire').addEventListener('click',()=>{
+    if(state.appRole==='master'&&window.innerWidth<720){
+      state.masterMobileTab=state.masterMobileTab==='list'?'score':'list';
+      applyRole();
+      if(state.masterMobileTab==='score')renderActiveViewer();
+      return;
+    }
+    openSheet('sRepertoire');
+  });
+  $('btnMasterToggleScore').addEventListener('click',()=>{state.masterMobileTab='score';applyRole();renderActiveViewer();});
+  $('btnMasterAddSong').addEventListener('click',()=>openSongSheet(null));
+  $('btnMasterLoadPdfs').addEventListener('click',()=>openSheet('sLoad'));
+  $('inputMasterSearch').addEventListener('input',e=>{state.searchQuery=e.target.value;$('inputSearchSong').value=e.target.value;renderSetlist();});
+  $('selectMasterScene').addEventListener('change',e=>{state.currentSceneId=e.target.value;state.currentSongIndex=0;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();});
+  $('btnMasterSaveScene').addEventListener('click',()=>{$('inputSceneName').value='Escena '+(state.scenes.length+1);openSheet('sScene');});
+  $('btnCloseConnToast').addEventListener('click',()=>$('connToast').classList.remove('show'));
+
+  /* dock */
+  $('btnPagePrev').addEventListener('click',()=>prevPageAction(isMasterControl()));
+  $('btnPageNext').addEventListener('click',()=>nextPageAction(isMasterControl()));
+  $('btnSongPrev').addEventListener('click',()=>prevSongAction(isMasterControl()));
+  $('btnSongNext').addEventListener('click',()=>nextSongAction(isMasterControl()));
+  $('zenExit').addEventListener('click',()=>setZen(false));
+
+  /* menú */
+  const setZoom=z=>{state.zoomLevel=Math.max(.6,Math.min(2.4,+z.toFixed(2)));saveAppState();$('zVal').textContent=Math.round(state.zoomLevel*100)+'%';renderActiveViewer();};
+  $('zIn').addEventListener('click',()=>setZoom(state.zoomLevel+.15));$('zOut').addEventListener('click',()=>setZoom(state.zoomLevel-.15));
+  $('swNight').addEventListener('change',e=>{state.invertColors=e.target.checked;saveAppState();renderActiveViewer();});
+  $('swSync').addEventListener('change',e=>{state.syncMasterPage=e.target.checked;saveAppState();});
+  $('swMetro').addEventListener('change',e=>{if(e.target.checked)startMetronome();else stopMetronome();});
+  $('chkAutoStreamPdf').addEventListener('change',e=>{state.autoStreamPdf=e.target.checked;saveAppState();});
+  $('inputSearchSong').addEventListener('input',e=>{state.searchQuery=e.target.value;renderSetlist();});
+
+  let rz=null;window.addEventListener('resize',()=>{clearTimeout(rz);rz=setTimeout(renderActiveViewer,250);});
+
+  /* gestos */
+  const surface=$('surface');let tsx=0,tsy=0,maxT=0,pd=0,pz=1,tapTimer=null,lastTap=0,suppressClickUntil=0;
+  const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+  surface.addEventListener('touchstart',e=>{if(e.touches.length>maxT)maxT=e.touches.length;if(e.touches.length===2){pd=dist(e.touches[0],e.touches[1]);pz=state.zoomLevel;}else if(e.touches.length===1){tsx=e.touches[0].clientX;tsy=e.touches[0].clientY;}},{passive:true});
+  surface.addEventListener('touchmove',e=>{if(e.touches.length===2&&pd>0){e.preventDefault();state.zoomLevel=Math.max(.6,Math.min(2.4,+(pz*dist(e.touches[0],e.touches[1])/pd).toFixed(2)));applyZoomPreview();}},{passive:false});
+  surface.addEventListener('touchend',e=>{if(e.touches.length)return;
+    if(maxT>=2){suppressClickUntil=Date.now()+400;saveAppState();renderActiveViewer();}
+    else if(e.changedTouches[0]){const dx=e.changedTouches[0].clientX-tsx,dy=e.changedTouches[0].clientY-tsy;
+      if(Math.hypot(dx,dy)>18)suppressClickUntil=Date.now()+350;
+      if(state.zoomLevel<=1.05&&Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0)nextPageAction(isMasterControl());else prevPageAction(isMasterControl());}}
+    setTimeout(()=>{maxT=0;},50);pd=0;},{passive:true});
+  surface.addEventListener('click',e=>{
+    if(maxT>=2||Date.now()<suppressClickUntil)return;const r=surface.getBoundingClientRect(),x=(e.clientX-r.left)/r.width;
+    if(x<.22){prevPageAction(isMasterControl());return;}if(x>.78){nextPageAction(isMasterControl());return;}
+    const now=Date.now();
+    if(now-lastTap<300){clearTimeout(tapTimer);lastTap=0;setZoom(state.zoomLevel>1.05?1:1.8);return;}
+    lastTap=now;tapTimer=setTimeout(()=>setZen(!state.zenMode),280);
+  });
+  window.addEventListener('keydown',e=>{
+    const tag=document.activeElement&&document.activeElement.tagName;if(['INPUT','SELECT','TEXTAREA'].includes(tag))return;
+    if(e.key==='Escape'){if(sheetStack.length)closeTop();else if(state.zenMode)setZen(false);return;}
+    if(sheetStack.length||!$('welcome').classList.contains('hidden'))return;const m=isMasterControl();
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){e.preventDefault();nextPageAction(m);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prevPageAction(m);}
+    else if(e.key==='ArrowDown'){e.preventDefault();nextSongAction(m);}else if(e.key==='ArrowUp'){e.preventDefault();prevSongAction(m);}
+  });
+
+  /* avisos */
+  document.querySelectorAll('.btn-cue').forEach(b=>b.addEventListener('click',()=>{state.activeCue=b.getAttribute('data-cue')||'';broadcastMasterSignal();renderAll();closeSheet('sCue');}));
+  $('btnCueCustom').addEventListener('click',()=>{const v=$('inputCueCustom').value.trim();if(!v)return;state.activeCue=v;$('inputCueCustom').value='';broadcastMasterSignal();renderAll();closeSheet('sCue');});
+
+  /* escenas */
+  $('selectScene').addEventListener('change',e=>{state.currentSceneId=e.target.value;state.currentSongIndex=0;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();});
+  let armDelScene=false;$('btnDeleteScene').addEventListener('click',()=>{if(state.scenes.length<=1){showConnToast('error','No se puede','Debe quedar al menos una escena.');return;}const b=$('btnDeleteScene');if(!armDelScene){armDelScene=true;b.textContent='¿Confirmar?';setTimeout(()=>{armDelScene=false;b.textContent='Eliminar';},3500);return;}armDelScene=false;b.textContent='Eliminar';state.scenes=state.scenes.filter(s=>s.id!==state.currentSceneId);state.currentSceneId=state.scenes[0].id;state.currentSongIndex=0;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();});
+  $('btnSaveNewScene').addEventListener('click',()=>{$('inputSceneName').value='Escena '+(state.scenes.length+1);openSheet('sScene');});
+  $('btnConfirmSaveScene').addEventListener('click',()=>{const name=$('inputSceneName').value.trim()||'Escena '+(state.scenes.length+1),id='scene_'+Date.now();state.scenes.push({id,name,songs:JSON.parse(JSON.stringify(getActiveSongs()))});state.currentSceneId=id;closeSheet('sScene');saveAppState();renderAll();});
+
+  /* PDF individual */
+  $('inputSinglePdfFile').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const song=getActiveSongs()[state.currentSongIndex];if(!song)return;const key=`${song.code}|${state.myInstrument}`;state.uploadedPdfs[key]=f;dropPdfCaches(key);persistPdfToDb(key,f);e.target.value='';if(isMasterControl())broadcastMasterSignal();renderAll();});
+
+  /* carga masiva (secuencial: evita canciones duplicadas) */
+  const handleBatchImport=async e=>{
+    const files=Array.from(e.target.files||[]).filter(f=>f.name.toLowerCase().endsWith('.pdf'));if(!files.length)return;
+    state.isImporting=true;
+    const mode=$('selectBatchInstrument').value,sorted=files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true})),total=sorted.length;
+    const songs=getLocalScene().songs,toInbox=$('chkImportUnmatchedToInbox').checked;let done=0;
+    $('batchImportFeedback').classList.add('hidden');$('batchImportProgressBox').classList.remove('hidden');$('btnDoneFolderModal').textContent='Espera…';$('btnDoneFolderModal').disabled=true;
+    for(const file of sorted){
+      const{songCode,detectedInst}=parseSongAndInstrument(file.name,file.webkitRelativePath||'');
+      const inst=mode!=='AUTO'?mode:(detectedInst||state.myInstrument),stdName=`${songCode} - ${inst}.pdf`,std=file.name===stdName?file:new File([file],stdName,{type:'application/pdf'});
+      let song=findMatchingSong(getActiveSongs(),songCode)||findMatchingSong(songs,songCode),key;
+      if(!song&&toInbox)key=`__UNASSIGNED__|${inst}|${Date.now()}_${Math.floor(Math.random()*1e5)}`;
+      else{if(!song){song=newSong(songCode);songs.push(song);}key=`${song.code}|${inst}`;}
+      state.uploadedPdfs[key]=std;dropPdfCaches(key);await persistPdfToDb(key,std);done++;
+      const pct=Math.round(done/total*100);$('batchImportProgressBar').style.width=pct+'%';$('batchImportProgressPct').textContent=pct+'%';$('batchImportProgressLabel').textContent=`${done} de ${total} PDFs`;$('batchImportCurrentFile').textContent=stdName;
+      if(done%4===0)await sleep(0);
+    }
+    e.target.value='';state.isImporting=false;saveAppState();$('btnDoneFolderModal').disabled=false;$('btnDoneFolderModal').textContent='Listo';
+    $('batchImportFeedback').textContent=`✓ ${done} PDFs guardados · ${songs.length} canciones en la lista.`;$('batchImportFeedback').classList.remove('hidden');
+    if(isMasterControl())broadcastMasterSignal();renderAll();
+  };
+  $('inputBatchPdfFiles').addEventListener('change',handleBatchImport);$('inputBatchFolderPc').addEventListener('change',handleBatchImport);
+  $('btnJumpToRouting').addEventListener('click',()=>{closeSheet('sLoad');openSheet('sRouting');});
+
+  /* conexión */
+  const tabQr=$('tabConnQrOffline'),tabOn=$('tabConnRoomOnline');
+  tabQr.addEventListener('click',()=>{tabQr.classList.add('on');tabOn.classList.remove('on');$('panelConnQr').classList.remove('hidden');$('panelConnOnline').classList.add('hidden');});
+  tabOn.addEventListener('click',()=>{tabOn.classList.add('on');tabQr.classList.remove('on');$('panelConnOnline').classList.remove('hidden');$('panelConnQr').classList.add('hidden');stopQrScanner();mqStartDiscovery(false);});
+  $('btnQrMasterCreate').addEventListener('click',qrMasterCreateOffer);
+  $('btnQrMusicianScan').addEventListener('click',()=>startQrScanner('Escanea el QR del Maestro'));
+  $('btnQrMasterScanAnswer').addEventListener('click',()=>startQrScanner('Escanea la respuesta del músico'));
+  $('btnStopQrScan').addEventListener('click',stopQrScanner);
+  $('btnCopyQrText').addEventListener('click',async()=>{if(!state.lastQrPayload)return;let ok=false;try{await navigator.clipboard.writeText(state.lastQrPayload);ok=true;}catch(e){}if(!ok){const ta=document.createElement('textarea');ta.value=state.lastQrPayload;document.body.appendChild(ta);ta.select();try{ok=document.execCommand('copy');}catch(e){}document.body.removeChild(ta);}setQrStatus(ok?'Código copiado. Pégalo en el otro dispositivo.':'No se pudo copiar.',ok?'ok':'err');});
+  $('btnApplyManualSignal').addEventListener('click',()=>{const v=$('inputManualSignal').value.trim();if(v)handleIncomingQrPayload(v);});
+  $('btnRefreshRooms').addEventListener('click',()=>mqStartDiscovery(true));
+  $('roomList').addEventListener('click',e=>{const b=e.target.closest('.btn-join-room');if(b)mqJoinRoom(b.getAttribute('data-room'));});
+  $('btnStartMasterRoom').addEventListener('click',mqCreateRoom);$('btnCloseMasterRoom').addEventListener('click',mqCloseRoom);
+
+  /* canciones */
+  $('btnAddSongModal').addEventListener('click',()=>openSongSheet(null));
+  $('btnDetectFromPdf').addEventListener('click',async()=>{
+    const code=$('inputNewSongId').value.trim(),fb=$('songDetectFeedback');let key=`${code}|${state.myInstrument}`,file=state.uploadedPdfs[key]||state.onlineTempPdfs[key];if(!file){const anyK=Object.keys(state.uploadedPdfs).find(k=>k.startsWith(code+'|'));if(anyK){key=anyK;file=state.uploadedPdfs[anyK];}}fb.classList.remove('hidden');
+    if(!file){fb.textContent='Primero carga un PDF de esta canción para tu instrumento.';return;}
+    fb.textContent='Leyendo el PDF…';const res=await detectMetaFromPdfFile(key,file);
+    if(!res||!res.hasText){fb.textContent='Este PDF es una imagen escaneada. Escribe el tono y los BPM a mano.';return;}
+    const found=[];if(res.key){$('inputNewSongKey').value=res.key;found.push('Tono: '+res.key);}if(res.bpm){$('inputNewSongBpm').value=res.bpm;found.push('BPM: '+res.bpm);}
+    fb.textContent=found.length?'Detectado → '+found.join(' · '):'El PDF no indica tono ni BPM.';
+  });
+  $('btnSaveNewSong').addEventListener('click',()=>{
+    const songs=getActiveSongs(),code=$('inputNewSongId').value.trim()||`Canción ${songs.length+1}`,title=$('inputNewSongTitle').value.trim()||code,key=$('inputNewSongKey').value.trim()||'Do Menor (Cm)',bpm=Math.min(260,Math.max(30,parseInt($('inputNewSongBpm').value,10)||120)),genre=$('selectNewSongGenre').value||'Sin género';
+    if(editingSongIdx!==null&&songs[editingSongIdx]){
+      const s=songs[editingSongIdx],old=s.code;Object.assign(s,{code,title,key,bpm,genre});
+      if(old!==code)INSTRUMENTS.forEach(inst=>{const ok=`${old}|${inst}`,nk=`${code}|${inst}`;if(state.uploadedPdfs[ok]){state.uploadedPdfs[nk]=state.uploadedPdfs[ok];delete state.uploadedPdfs[ok];if(state.pdfPages[ok]){state.pdfPages[nk]=state.pdfPages[ok];delete state.pdfPages[ok];}if(pdfDocCache[ok]){try{pdfDocCache[ok].doc.destroy();}catch(e){}delete pdfDocCache[ok];}persistPdfToDb(nk,state.uploadedPdfs[nk]);deletePdfFromDb(ok);}});
+      if(state.metronomeOn&&state.currentSongIndex===editingSongIdx){stopMetronome();startMetronome();}
+    }else{songs.push(newSong(code,{id:'song_'+Date.now(),title,key,bpm,genre}));state.currentSongIndex=songs.length-1;state.currentPage=1;}
+    editingSongIdx=null;closeSheet('sSong');saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();
+  });
+  let armDelSong=false;$('btnDeleteSong').addEventListener('click',()=>{const songs=getActiveSongs(),s=songs[editingSongIdx];if(!s)return;const b=$('btnDeleteSong');if(!armDelSong){armDelSong=true;b.textContent='Toca otra vez para eliminar';setTimeout(()=>{armDelSong=false;b.textContent='Eliminar canción';},3500);return;}armDelSong=false;b.textContent='Eliminar canción';songs.splice(editingSongIdx,1);if(state.currentSongIndex>=songs.length)state.currentSongIndex=Math.max(0,songs.length-1);state.currentPage=1;editingSongIdx=null;closeSheet('sSong');saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();});
+
+  /* géneros */
+  window.renderGenreAssignList=()=>{
+    const list=$('genreAssignList'),q=$('inputGenreModalSearch').value.trim().toLowerCase(),songs=getActiveSongs();list.innerHTML='';
+    songs.forEach((song,idx)=>{if(q&&!song.code.toLowerCase().includes(q)&&!song.title.toLowerCase().includes(q))return;
+      const row=document.createElement('div');row.className='row';
+      row.innerHTML=`<label class="flex" style="flex:1;min-width:0;flex-wrap:nowrap"><input type="checkbox" class="chk-genre-song" data-idx="${idx}" style="width:20px;height:20px;accent-color:var(--accent)" /><span class="t">${esc(song.title)}</span></label><select class="input sel-row-genre" style="width:auto;min-height:36px;font-size:14px">${ASSIGNABLE_GENRES.map(g=>`<option ${(song.genre||'Sin género')===g?'selected':''}>${esc(g)}</option>`).join('')}</select>`;
+      row.querySelector('.sel-row-genre').addEventListener('change',ev=>{songs[idx].genre=ev.target.value;saveAppState();if(isMasterControl())broadcastMasterSignal();renderSetlist();});list.appendChild(row);});
+  };
+  $('inputGenreModalSearch').addEventListener('input',window.renderGenreAssignList);
+  $('btnToggleSelectAllGenre').addEventListener('click',()=>{const c=[...document.querySelectorAll('.chk-genre-song')],all=c.length&&c.every(x=>x.checked);c.forEach(x=>x.checked=!all);});
+  $('btnApplyBulkGenre').addEventListener('click',()=>{const g=$('selectBulkGenre').value,songs=getActiveSongs();document.querySelectorAll('.chk-genre-song:checked').forEach(c=>{const s=songs[parseInt(c.dataset.idx,10)];if(s)s.genre=g;});saveAppState();if(isMasterControl())broadcastMasterSignal();window.renderGenreAssignList();renderSetlist();});
+
+  /* barra remota */
+  const remoteReq=mode=>{const song=getActiveSongs()[state.currentSongIndex];if(!song)return;const key=`${song.code}|${state.myInstrument}`,p=$('remotePdfProgress');p.textContent='0%';p.classList.remove('hidden');requestPdfFromMaster(key,mode,(rx,tot)=>{p.textContent=Math.round(rx/tot*100)+'%';}).then(()=>p.classList.add('hidden')).catch(err=>{p.textContent=err.message||'Error';});};
+  $('btnRemoteViewPdf').addEventListener('click',()=>remoteReq('view'));$('btnRemoteDownloadPdf').addEventListener('click',()=>remoteReq('download'));
+
+  /* organizar PDFs */
+  window.renderRoutingModal=()=>{
+    const tabs=$('routingInstrumentTabs'),listEl=$('routingList'),q=$('inputRoutingSearch').value.trim().toLowerCase(),allKeys=Object.keys(state.uploadedPdfs),songs=getActiveSongs();
+    const counts={Todos:allKeys.length,'Sin asignar':0};INSTRUMENTS.forEach(i=>counts[i]=0);
+    allKeys.forEach(k=>{if(k.startsWith('__UNASSIGNED__|'))counts['Sin asignar']++;else{const i=k.split('|')[1];if(counts[i]!==undefined)counts[i]++;}});
+    tabs.innerHTML='';['Todos',...INSTRUMENTS,'Sin asignar'].forEach(t=>{const b=document.createElement('button');b.className='chip'+(state.routingFilterInst===t?' on':'');b.textContent=`${t} ${counts[t]||0}`;b.addEventListener('click',()=>{state.routingFilterInst=t;window.renderRoutingModal();});tabs.appendChild(b);});
+    listEl.innerHTML='';let shown=0;
+    allKeys.sort((a,b)=>(state.uploadedPdfs[a].name||'').localeCompare(state.uploadedPdfs[b].name||'',undefined,{numeric:true})).forEach(oldKey=>{
+      const file=state.uploadedPdfs[oldKey];if(!file)return;const un=oldKey.startsWith('__UNASSIGNED__|'),parts=oldKey.split('|'),curSong=un?'':parts[0],curInst=parts[1]||state.myInstrument;
+      if(state.routingFilterInst==='Sin asignar'&&!un)return;if(state.routingFilterInst!=='Todos'&&state.routingFilterInst!=='Sin asignar'&&(un||curInst!==state.routingFilterInst))return;
+      if(q&&!file.name.toLowerCase().includes(q)&&!curSong.toLowerCase().includes(q))return;shown++;
+      const kb=Math.max(1,Math.round((file.size||0)/1024)),row=document.createElement('div');row.className='group';row.style.padding='12px';row.style.display='flex';row.style.flexDirection='column';row.style.gap='8px';
+      const io=INSTRUMENTS.map(i=>`<option value="${esc(i)}" ${curInst===i?'selected':''}>${esc(i)}</option>`).join('');
+      const so=[`<option value="__UNASSIGNED__" ${un?'selected':''}>— Sin asignar —</option>`].concat(songs.map(s=>`<option value="${esc(s.code)}" ${!un&&curSong===s.code?'selected':''}>${esc(s.title)}</option>`)).join('');
+      row.innerHTML=`<div><div class="t">${esc(file.name)}</div><div class="s">${kb} KB · ${un?'<span style="color:var(--accent)">Sin asignar</span>':esc(curSong+' · '+curInst)}</div></div><div class="flex"><select class="input sel-route-inst grow" style="min-height:38px;font-size:14px">${io}</select><select class="input sel-route-song grow" style="min-height:38px;font-size:14px">${so}</select></div><div class="flex"><button class="btn sm btn-route-view grow">Abrir</button><button class="btn sm danger btn-route-del">Eliminar</button></div>`;
+      const reassign=()=>{const ni=row.querySelector('.sel-route-inst').value,ns=row.querySelector('.sel-route-song').value,nk=ns==='__UNASSIGNED__'?`__UNASSIGNED__|${ni}|${Date.now()}_${Math.floor(Math.random()*1e4)}`:`${ns}|${ni}`;if(nk===oldKey)return;delete state.uploadedPdfs[oldKey];dropPdfCaches(oldKey);deletePdfFromDb(oldKey);dropPdfCaches(nk);state.uploadedPdfs[nk]=file;persistPdfToDb(nk,file);if(isMasterControl())broadcastMasterSignal();window.renderRoutingModal();renderAll();};
+      row.querySelector('.sel-route-inst').addEventListener('change',reassign);row.querySelector('.sel-route-song').addEventListener('change',reassign);
+      row.querySelector('.btn-route-view').addEventListener('click',()=>{if(un)return;const i=songs.findIndex(s=>s.code===curSong);if(i>=0)state.currentSongIndex=i;state.myInstrument=curInst;state.currentPage=1;closeSheet('sRouting');saveAppState();renderAll();});
+      const delBtn=row.querySelector('.btn-route-del');let armDelRoute=false;delBtn.addEventListener('click',()=>{if(!armDelRoute){armDelRoute=true;delBtn.textContent='¿Borrar?';setTimeout(()=>{armDelRoute=false;delBtn.textContent='Eliminar';},3500);return;}delete state.uploadedPdfs[oldKey];dropPdfCaches(oldKey);deletePdfFromDb(oldKey);if(isMasterControl())broadcastMasterSignal();window.renderRoutingModal();renderAll();});
+      listEl.appendChild(row);
+    });
+    if(!shown)listEl.innerHTML='<div class="note" style="text-align:center">No hay PDFs en esta categoría.</div>';
+    $('routingSummaryText').textContent=`Mostrando ${shown} de ${allKeys.length} PDFs guardados en este dispositivo.`;const dlInst=(state.routingFilterInst!=='Todos'&&state.routingFilterInst!=='Sin asignar')?state.routingFilterInst:state.myInstrument;$('btnDownloadByInstrument').textContent=`Descargar PDFs de ${dlInst} (${counts[dlInst]||0})`;
+  };
+  $('inputRoutingSearch').addEventListener('input',()=>window.renderRoutingModal());
+  $('btnDownloadByInstrument').addEventListener('click',async()=>{
+    const inst=(state.routingFilterInst!=='Todos'&&state.routingFilterInst!=='Sin asignar')?state.routingFilterInst:state.myInstrument;
+    const keys=Object.keys(state.uploadedPdfs).filter(k=>!k.startsWith('__UNASSIGNED__|')&&k.split('|')[1]===inst);
+    if(!keys.length){$('routingSummaryText').textContent=`No hay PDFs de ${inst}. Elige un instrumento arriba.`;return;}
+    $('routingSummaryText').textContent=`Descargando ${keys.length} PDFs de ${inst}…`;
+    for(const k of keys){const f=state.uploadedPdfs[k];if(!f)continue;const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),4000);await sleep(200);}
+    $('routingSummaryText').textContent=`Listo: ${keys.length} PDFs de ${inst}.`;
+  });
+  $('inputRoutingUploadInbox').addEventListener('change',e=>{const files=Array.from(e.target.files||[]).filter(f=>f.name.toLowerCase().endsWith('.pdf'));if(!files.length)return;const inst=(state.routingFilterInst!=='Todos'&&state.routingFilterInst!=='Sin asignar')?state.routingFilterInst:state.myInstrument;files.forEach(f=>{const k=`__UNASSIGNED__|${inst}|${Date.now()}_${Math.floor(Math.random()*1e5)}`;state.uploadedPdfs[k]=f;persistPdfToDb(k,f);});e.target.value='';state.routingFilterInst='Sin asignar';window.renderRoutingModal();renderAll();});
+  $('btnAutoMatchUnassigned').addEventListener('click',()=>{
+    const songs=getActiveSongs();let moved=0;
+    Object.keys(state.uploadedPdfs).forEach(oldKey=>{if(!oldKey.startsWith('__UNASSIGNED__|'))return;const file=state.uploadedPdfs[oldKey],{songCode,detectedInst}=parseSongAndInstrument(file.name),m=findMatchingSong(songs,songCode);
+      if(m){const inst=detectedInst||oldKey.split('|')[1]||state.myInstrument,nk=`${m.code}|${inst}`;delete state.uploadedPdfs[oldKey];deletePdfFromDb(oldKey);dropPdfCaches(nk);state.uploadedPdfs[nk]=file;persistPdfToDb(nk,file);moved++;}});
+    if(moved&&isMasterControl())broadcastMasterSignal();window.renderRoutingModal();renderAll();$('routingSummaryText').textContent=moved?`Se emparejaron ${moved} PDFs.`:'No se encontraron coincidencias nuevas.';
+  });
+
+  /* biblioteca del Maestro */
+  window.renderMusicianLibModal=()=>{
+    const inst=$('selectMusicianLibInstrument').value||state.myInstrument,list=$('musicianLibList'),songs=getActiveSongs();list.innerHTML='';let dl=0;
+    if(!songs.length)list.innerHTML='<div class="row muted">Aún no hay canciones del Maestro.</div>';
+    songs.forEach((song,idx)=>{
+      const key=`${song.code}|${inst}`,hasLocal=!!state.uploadedPdfs[key],hasOnline=!!state.onlineTempPdfs[key],inMaster=!!state.masterPdfCatalog[key];if(!hasLocal&&inMaster)dl++;
+      const row=document.createElement('div');row.className='row';
+      let act='';if(hasLocal)act='<span class="tag green">Guardado</span><button class="btn sm btn-lib-open">Abrir</button>';else if(inMaster)act=`${hasOnline?'<span class="tag blue">En línea</span>':'<button class="btn sm btn-lib-view">Ver</button>'}<button class="btn sm primary btn-lib-dl">Guardar</button>`;else act='<span class="tag">Sin PDF</span>';
+      row.innerHTML=`<div class="song-main"><div class="t">${esc(song.title)}</div><div class="s">${esc(song.key)} · ${esc(song.bpm)} BPM</div></div><div class="flex" style="flex-wrap:nowrap">${act}</div>`;
+      const o=row.querySelector('.btn-lib-open');if(o)o.addEventListener('click',()=>{state.currentSongIndex=idx;state.currentPage=1;state.myInstrument=inst;saveAppState();onInstrumentChanged();closeSheet('sLibrary');renderAll();});
+      const v=row.querySelector('.btn-lib-view');if(v)v.addEventListener('click',()=>{v.textContent='…';requestPdfFromMaster(key,'view').then(()=>{state.currentSongIndex=idx;state.currentPage=1;state.myInstrument=inst;saveAppState();onInstrumentChanged();closeSheet('sLibrary');renderAll();}).catch(err=>{v.textContent=err.message||'Error';});});
+      const d=row.querySelector('.btn-lib-dl');if(d)d.addEventListener('click',()=>{d.textContent='…';requestPdfFromMaster(key,'download').then(()=>window.renderMusicianLibModal()).catch(err=>{d.textContent=err.message||'Error';});});
+      list.appendChild(row);
+    });
+    const b=$('btnDownloadAllMyInstrument');b.textContent=`Descargar todo (${dl})`;b.disabled=dl===0;
+  };
+  $('selectMusicianLibInstrument').addEventListener('change',()=>window.renderMusicianLibModal());
+  $('btnDownloadAllMyInstrument').addEventListener('click',async()=>{
+    const inst=$('selectMusicianLibInstrument').value||state.myInstrument,pending=getActiveSongs().map(s=>`${s.code}|${inst}`).filter(k=>!state.uploadedPdfs[k]&&state.masterPdfCatalog[k]);if(!pending.length)return;
+    const p=$('musicianDownloadProgress');p.classList.remove('hidden');let ok=0;
+    for(let i=0;i<pending.length;i++){p.textContent=`Descargando ${i+1} de ${pending.length}…`;try{await requestPdfFromMaster(pending[i],'download');ok++;}catch(e){}}
+    p.textContent=ok===pending.length?`✓ ${ok} partituras listas para usar sin internet.`:`Se descargaron ${ok} de ${pending.length}. Reintenta para el resto.`;window.renderMusicianLibModal();
+  });
+
+  /* lista base */
+  const showBaseFeedback=m=>{const f=$('baseListFeedback');f.textContent=m;f.classList.remove('hidden');};
+  const parseLinesToSongs=txt=>{const out=[];String(txt||'').split(/\r?\n/).map(l=>l.trim()).filter(Boolean).forEach((line,i)=>{if(i===0&&/^(cancion|canción|tema|titulo|título|nombre)[,;|]/i.test(line))return;const sep=line.includes('|')?'|':line.includes(';')?';':line.includes(',')?',':null,cols=sep?line.split(sep).map(c=>c.trim()):[line],name=(cols[0]||'').replace(/^\d+[.)\-]\s*/,'').trim();if(!name)return;const genre=(cols[1]&&ASSIGNABLE_GENRES.includes(cols[1]))?cols[1]:detectGenreFromName(name+' '+(cols[1]||''));out.push(newSong(name,{id:'b_'+Date.now()+'_'+i+'_'+Math.floor(Math.random()*1e4),key:cols[2]||'Do Mayor',bpm:parseInt(cols[3],10)||120,genre}));});return out;};
+  const applyImported=(list,replace)=>{
+    if(!list.length){showBaseFeedback('No se encontraron nombres válidos.');return;}const sc=getLocalScene();
+    if(replace){sc.songs=list;state.currentSongIndex=0;state.currentPage=1;}else{const ex=new Set(sc.songs.map(s=>normSongKey(s.code)));list.forEach(n=>{if(!ex.has(normSongKey(n.code))){sc.songs.push(n);ex.add(normSongKey(n.code));}});}
+    saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback(`✓ Lista con ${sc.songs.length} canciones. Ya puedes cargar los PDFs.`);
+  };
+  $('btnApplyBaseListText').addEventListener('click',()=>applyImported(parseLinesToSongs($('inputBaseListText').value),$('chkBaseReplaceList').checked));
+  $('inputBaseListFile').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const t=await f.text();e.target.value='';applyImported(parseLinesToSongs(t),$('chkBaseReplaceList').checked);});
+  $('inputBaseListFromPdfs').addEventListener('change',async e=>{
+    const files=Array.from(e.target.files||[]).filter(f=>f.name.toLowerCase().endsWith('.pdf'));if(!files.length)return;const sc=getLocalScene();if($('chkBaseReplaceList').checked){sc.songs=[];state.currentSongIndex=0;state.currentPage=1;}
+    for(const file of files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}))){const{songCode,detectedInst}=parseSongAndInstrument(file.name,file.webkitRelativePath||''),inst=detectedInst||state.myInstrument,std=new File([file],`${songCode} - ${inst}.pdf`,{type:'application/pdf'});let s=sc.songs.find(x=>normSongKey(x.code)===normSongKey(songCode));if(!s){s=newSong(songCode);sc.songs.push(s);}const key=`${s.code}|${inst}`;state.uploadedPdfs[key]=std;dropPdfCaches(key);await persistPdfToDb(key,std);}
+    e.target.value='';saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback(`✓ ${sc.songs.length} temas y ${files.length} PDFs cargados.`);
+  });
+  $('btnExportBaseListTxt').addEventListener('click',()=>{const txt=getActiveSongs().map(s=>`${s.code} | ${s.genre||'Sin género'} | ${s.key||'Do Mayor'} | ${s.bpm||120}`).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain;charset=utf-8'}));a.download='repertorio_atrilsync.txt';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);});
+  $('btnExportBackupJson').addEventListener('click',()=>{const data={version:3,exportedAt:new Date().toISOString(),myInstrument:state.myInstrument,currentSceneId:state.currentSceneId,scenes:state.scenes};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='respaldo_atrilsync.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);showBaseFeedback('✓ Respaldo .json descargado.');});
+  $('inputImportBackupJson').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.scenes)||!d.scenes.length)throw new Error('Archivo inválido');state.scenes=d.scenes;state.currentSceneId=(d.currentSceneId&&state.scenes.some(s=>s.id===d.currentSceneId))?d.currentSceneId:state.scenes[0].id;state.currentSongIndex=0;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback(`✓ Respaldo restaurado (${state.scenes.length} escenas).`);}catch(err){showBaseFeedback('No se pudo leer el respaldo .json.');}e.target.value='';});
+  const armed=(btn,label,confirmLabel,fn)=>{let on=false;btn.addEventListener('click',()=>{if(!on){on=true;btn.textContent=confirmLabel;setTimeout(()=>{on=false;btn.textContent=label;},4000);return;}on=false;btn.textContent=label;fn();});};
+  armed($('btnClearSongsOnly'),'Vaciar canciones','Toca otra vez para confirmar',()=>{const sc=getLocalScene();sc.songs=[];state.currentSongIndex=0;state.currentPage=1;state.selectedGenre='Todos';saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback('Repertorio vaciado.');});
+  armed($('btnClearAllSession'),'Borrar todo (canciones y PDFs)','Toca otra vez para borrar TODO',async()=>{const sc=getLocalScene();sc.songs=[];state.currentSongIndex=0;state.currentPage=1;state.selectedGenre='Todos';state.uploadedPdfs={};state.onlineTempPdfs={};state.pdfPages={};Object.keys(pdfDocCache).forEach(k=>{try{pdfDocCache[k].doc.destroy();}catch(e){}delete pdfDocCache[k];});await clearAllPdfsFromDb();saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback('Sesión reiniciada por completo.');});
+
+  renderAll();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAtrilSyncApp);
+else initAtrilSyncApp();
+</script>
+</body>
+</html>
+```
