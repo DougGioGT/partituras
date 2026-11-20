@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -182,17 +181,28 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
     </div>
     <div class="group" style="padding:14px;display:flex;flex-direction:column;gap:10px">
       <div><label class="field">Tu nombre</label><input id="inputProfileName" class="input" maxlength="32" placeholder="Ej. Douglas" /></div>
-      <div><label class="field">Tu instrumento</label><select id="selectProfileInstrument" class="input">
-        <option value="Trompeta 1">Trompeta 1</option>
-        <option value="Trompeta 2">Trompeta 2</option>
-        <option value="Trompeta 3">Trompeta 3</option>
-        <option value="Saxo Alto">Saxo Alto</option>
-        <option value="Saxo Tenor">Saxo Tenor</option>
-        <option value="Piano">Piano</option>
-        <option value="Bajo">Bajo</option>
-        <option value="Guitarra">Guitarra</option>
-        <option value="Percusión">Percusión</option>
-      </select></div>
+      <div>
+        <label class="field">Tu instrumento</label>
+        <div class="flex" style="flex-wrap:nowrap">
+          <select id="selectProfileInstrument" class="input grow">
+            <option value="Trompeta 1">🎺 Trompeta 1</option>
+            <option value="Trompeta 2">🎺 Trompeta 2</option>
+            <option value="Trompeta 3">🎺 Trompeta 3</option>
+            <option value="Saxo Alto">🎷 Saxo Alto</option>
+            <option value="Saxo Tenor">🎷 Saxo Tenor</option>
+            <option value="Piano">🎹 Piano</option>
+            <option value="Bajo">🎸 Bajo</option>
+            <option value="Guitarra">🎸 Guitarra</option>
+            <option value="Percusión">🥁 Percusión</option>
+          </select>
+          <button type="button" id="btnWelcomeToggleNewInst" class="btn sm" style="min-height:44px;white-space:nowrap">+ Nuevo</button>
+        </div>
+      </div>
+      <div id="welcomeCustomInstBox" class="hidden stack" style="gap:8px;padding-top:4px;border-top:1px solid var(--line)">
+        <input id="inputWelcomeCustomInst" class="input" maxlength="28" placeholder="Nombre (ej. Trombón, Acordeón, Voz)" />
+        <div id="welcomeIconPicker" class="flex" style="gap:6px"></div>
+        <button type="button" id="btnWelcomeAddInst" class="btn sm primary block">Guardar instrumento</button>
+      </div>
     </div>
     <p class="sec" style="margin-top:2px">Elige cómo entrar hoy</p>
     <button class="wcard" id="btnStartAsMasterMode"><span class="ic">🎚️</span><span><b>Maestro</b><span class="d">Dirige el repertorio y pasa las páginas de todas las tablets.</span></span></button>
@@ -209,7 +219,7 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
     <span id="curSub">Toca para elegir canción ▾</span>
   </button>
   <button id="connChip" class="chip" data-open="sConn" data-for="master musician" aria-label="Conexión"><span class="dot" id="connDot"></span><span id="connText">Conectar</span></button>
-  <button id="btnInstrument" class="chip" data-open="sInstrument" aria-label="Elegir instrumento">🎺 <span id="instText">Trompeta 1</span></button>
+  <button id="btnInstrument" class="chip" data-open="sInstrument" aria-label="Elegir instrumento"><span id="instIcon">🎺</span> <span id="instText">Trompeta 1</span></button>
   <button id="btnMenu" class="icon" data-open="sMenu" aria-label="Menú">⋯</button>
 </header>
 
@@ -304,7 +314,15 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
 <!-- INSTRUMENTO -->
 <section class="sheet" id="sInstrument" role="dialog" aria-label="Instrumento">
   <div class="sh"><h2>Tu atril</h2><button class="link" data-close>Listo</button></div>
-  <div class="sb"><div class="group" id="instList"></div></div>
+  <div class="sb">
+    <div class="group" id="instList"></div>
+    <div class="sec">Agregar otro instrumento</div>
+    <div class="group" style="padding:12px;display:flex;flex-direction:column;gap:10px">
+      <input id="inputCustomInstName" class="input" maxlength="28" placeholder="Ej. Trombón, Acordeón, Voz..." />
+      <div id="customInstIconPicker" class="flex" style="gap:6px"></div>
+      <button id="btnAddCustomInst" class="btn primary block">+ Agregar instrumento</button>
+    </div>
+  </div>
 </section>
 
 <!-- REPERTORIO -->
@@ -518,11 +536,27 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const INSTRUMENTS=['Trompeta 1','Trompeta 2','Trompeta 3','Saxo Alto','Saxo Tenor','Piano','Bajo','Guitarra','Percusión'];
+const BASIC_INST_ICONS=['🎺','🎷','🎹','🎸','🥁','🎻','🎤','🪗','🪇','🎵'];
+function getAllInstruments(){return [...INSTRUMENTS,...(state.customInstruments||[]).map(c=>c.name)];}
+function getInstrumentIcon(inst){
+  const custom=(state.customInstruments||[]).find(c=>c.name===inst);
+  if(custom&&custom.icon)return custom.icon;
+  const s=String(inst||'').toLowerCase();
+  if(/tromp|tpt|tromb/.test(s))return'🎺';
+  if(/sax/.test(s))return'🎷';
+  if(/piano|teclad|key/.test(s))return'🎹';
+  if(/bajo|bass|guitarr|gtr/.test(s))return'🎸';
+  if(/perc|bater|timbal|conga|guira|güira|marimba/.test(s))return'🥁';
+  if(/viol|chelo|cello/.test(s))return'🎻';
+  if(/voz|coro|cant/.test(s))return'🎤';
+  if(/acorde/.test(s))return'🪗';
+  return'🎵';
+}
 const GENRES=['Todos','Cumbia','Merengue','Salsa','Ska / Fusión','Balada','Mix / Show','Sin género'];
 const ASSIGNABLE_GENRES=GENRES.filter(g=>g!=='Todos');
 function detectGenreFromName(text){const t=String(text||'').toLowerCase();if(/cumbia/.test(t))return'Cumbia';if(/mereng/.test(t))return'Merengue';if(/salsa/.test(t))return'Salsa';if(/\bska\b|rock|fusion|fusión/.test(t))return'Ska / Fusión';if(/balada|bolero|romant/.test(t))return'Balada';if(/mix|popurri|popurrí|show/.test(t))return'Mix / Show';return'Sin género';}
 
-const state={appRole:'master',hasChosenRole:false,zenMode:false,invertColors:false,zoomLevel:1,userName:'',myInstrument:'Trompeta 1',searchQuery:'',selectedGenre:'Todos',currentSceneId:'scene_default',scenes:[{id:'scene_default',name:'Repertorio',songs:[]}],currentSongIndex:0,currentPage:1,activeCue:'',uploadedPdfs:{},onlineTempPdfs:{},masterPdfCatalog:{},autoStreamPdf:true,syncMasterPage:false,masterMobileTab:'list',routingFilterInst:'Todos',pendingPdfTransfers:{},pdfPages:{},remoteSongs:null,offlineRole:'none',onlineRole:'none',offlinePeers:[],pendingOffline:null,pendingTimer:null,musicianPc:null,musicianDc:null,lastQrPayload:'',qrStream:null,qrScanRaf:null,keepStream:null,isProcessingQr:false,metronomeOn:false,metronomeTimer:null,metronomeSong:null,audioCtx:null,offlineReady:false};
+const state={appRole:'master',hasChosenRole:false,zenMode:false,invertColors:false,zoomLevel:1,userName:'',myInstrument:'Trompeta 1',customInstruments:[],selectedCustomIcon:'🎺',searchQuery:'',selectedGenre:'Todos',currentSceneId:'scene_default',scenes:[{id:'scene_default',name:'Repertorio',songs:[]}],currentSongIndex:0,currentPage:1,activeCue:'',uploadedPdfs:{},onlineTempPdfs:{},masterPdfCatalog:{},autoStreamPdf:true,syncMasterPage:false,masterMobileTab:'list',routingFilterInst:'Todos',pendingPdfTransfers:{},pdfPages:{},remoteSongs:null,offlineRole:'none',onlineRole:'none',offlinePeers:[],pendingOffline:null,pendingTimer:null,musicianPc:null,musicianDc:null,lastQrPayload:'',qrStream:null,qrScanRaf:null,keepStream:null,isProcessingQr:false,metronomeOn:false,metronomeTimer:null,metronomeSong:null,audioCtx:null,offlineReady:false};
 
 function getRole(){if(state.appRole==='solo')return'solo';if(state.offlineRole==='musician'||state.onlineRole==='musician')return'musician';if(state.offlineRole==='master'||state.onlineRole==='master')return'master';return state.appRole;}
 function isMasterControl(){return getRole()==='master';}
@@ -531,8 +565,8 @@ function getLocalScene(){return state.scenes.find(s=>s.id===state.currentSceneId
 function getPages(song,inst){return state.pdfPages[`${song.code}|${inst||state.myInstrument}`]||song.pages||1;}
 
 /* ===== Persistencia ===== */
-function saveAppState(){try{localStorage.setItem('atrilsync_state_v3',JSON.stringify({chosen:state.hasChosenRole,appRole:state.appRole,userName:state.userName,myInstrument:state.myInstrument,invertColors:state.invertColors,zoomLevel:state.zoomLevel,currentSceneId:state.currentSceneId,scenes:state.scenes,currentSongIndex:state.currentSongIndex,currentPage:state.currentPage,autoStreamPdf:state.autoStreamPdf,syncMasterPage:state.syncMasterPage}));const ind=$('saveIndicator');if(ind)ind.textContent='Guardado a las '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch(e){}}
-function loadAppState(){try{let raw=localStorage.getItem('atrilsync_state_v3');if(!raw)raw=localStorage.getItem('atrilsync_state_v2');if(!raw)return;const d=JSON.parse(raw);state.hasChosenRole=!!d.chosen;if(['master','musician','solo'].includes(d.appRole))state.appRole=d.appRole;if(typeof d.userName==='string')state.userName=d.userName.trim();if(INSTRUMENTS.includes(d.myInstrument))state.myInstrument=d.myInstrument;if(typeof d.invertColors==='boolean')state.invertColors=d.invertColors;if(typeof d.zoomLevel==='number')state.zoomLevel=Math.min(2.4,Math.max(.6,d.zoomLevel));if(Array.isArray(d.scenes)&&d.scenes.length)state.scenes=d.scenes;state.currentSceneId=(d.currentSceneId&&state.scenes.some(s=>s.id===d.currentSceneId))?d.currentSceneId:state.scenes[0].id;const songs=getActiveSongs();if(typeof d.currentSongIndex==='number'&&d.currentSongIndex>=0&&d.currentSongIndex<songs.length)state.currentSongIndex=d.currentSongIndex;if(typeof d.currentPage==='number'&&d.currentPage>=1)state.currentPage=d.currentPage;if(typeof d.autoStreamPdf==='boolean')state.autoStreamPdf=d.autoStreamPdf;if(typeof d.syncMasterPage==='boolean')state.syncMasterPage=d.syncMasterPage;}catch(e){}}
+function saveAppState(){try{localStorage.setItem('atrilsync_state_v3',JSON.stringify({chosen:state.hasChosenRole,appRole:state.appRole,userName:state.userName,myInstrument:state.myInstrument,customInstruments:state.customInstruments,invertColors:state.invertColors,zoomLevel:state.zoomLevel,currentSceneId:state.currentSceneId,scenes:state.scenes,currentSongIndex:state.currentSongIndex,currentPage:state.currentPage,autoStreamPdf:state.autoStreamPdf,syncMasterPage:state.syncMasterPage}));const ind=$('saveIndicator');if(ind)ind.textContent='Guardado a las '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}catch(e){}}
+function loadAppState(){try{let raw=localStorage.getItem('atrilsync_state_v3');if(!raw)raw=localStorage.getItem('atrilsync_state_v2');if(!raw)return;const d=JSON.parse(raw);state.hasChosenRole=!!d.chosen;if(['master','musician','solo'].includes(d.appRole))state.appRole=d.appRole;if(typeof d.userName==='string')state.userName=d.userName.trim();if(Array.isArray(d.customInstruments))state.customInstruments=d.customInstruments.filter(c=>c&&c.name);if(d.myInstrument&&getAllInstruments().includes(d.myInstrument))state.myInstrument=d.myInstrument;if(typeof d.invertColors==='boolean')state.invertColors=d.invertColors;if(typeof d.zoomLevel==='number')state.zoomLevel=Math.min(2.4,Math.max(.6,d.zoomLevel));if(Array.isArray(d.scenes)&&d.scenes.length)state.scenes=d.scenes;state.currentSceneId=(d.currentSceneId&&state.scenes.some(s=>s.id===d.currentSceneId))?d.currentSceneId:state.scenes[0].id;const songs=getActiveSongs();if(typeof d.currentSongIndex==='number'&&d.currentSongIndex>=0&&d.currentSongIndex<songs.length)state.currentSongIndex=d.currentSongIndex;if(typeof d.currentPage==='number'&&d.currentPage>=1)state.currentPage=d.currentPage;if(typeof d.autoStreamPdf==='boolean')state.autoStreamPdf=d.autoStreamPdf;if(typeof d.syncMasterPage==='boolean')state.syncMasterPage=d.syncMasterPage;}catch(e){}}
 function openPdfDb(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window))return reject(new Error('No IndexedDB'));const req=indexedDB.open('AtrilSyncPdfDB',1);req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('pdfs'))db.createObjectStore('pdfs',{keyPath:'key'});};req.onsuccess=e=>resolve(e.target.result);req.onerror=e=>reject(e.target.error);});}
 async function dbTx(mode,fn){try{const db=await openPdfDb();return await new Promise((resolve,reject)=>{const tx=db.transaction('pdfs',mode);const r=fn(tx.objectStore('pdfs'));tx.oncomplete=()=>resolve(r&&r.result);tx.onerror=()=>reject(tx.error);});}catch(e){return null;}}
 const persistPdfToDb=(key,file)=>dbTx('readwrite',s=>s.put({key,name:file.name,blob:file}));
@@ -838,7 +872,7 @@ function renderHeader(){
   const songs=getActiveSongs(),song=songs[state.currentSongIndex];
   $('curTitle').textContent=song?song.title:'AtrilSync';
   $('curSub').textContent=song?`${state.currentSongIndex+1} de ${songs.length} · ${song.key} · ${song.bpm} BPM${state.appRole==='master'&&window.innerWidth<720&&state.masterMobileTab==='score'?' · Volver a lista ▾':' ▾'}`:'Toca para elegir canción ▾';
-  $('instText').textContent=state.myInstrument;
+  $('instIcon').textContent=getInstrumentIcon(state.myInstrument);$('instText').textContent=state.myInstrument;
 }
 function renderActiveViewer(){
   const songs=getActiveSongs();if(state.currentSongIndex>=songs.length)state.currentSongIndex=Math.max(0,songs.length-1);
@@ -917,7 +951,30 @@ function renderSetlist(){
   if(state.appRole==='master')fillSongList($('masterSetlistContainer'),songs,q,true);
 }
 function renderScenes(){[$('selectScene'),$('selectMasterScene')].forEach(s=>{if(!s)return;s.innerHTML='';state.scenes.forEach(sc=>{const o=document.createElement('option');o.value=sc.id;o.textContent=sc.name;if(sc.id===state.currentSceneId)o.selected=true;s.appendChild(o);});});}
-function renderInstrumentPicker(){const l=$('instList');l.innerHTML='';INSTRUMENTS.forEach(inst=>{const b=document.createElement('button');b.className='row';b.innerHTML=`<span>${esc(inst)}</span><span style="color:var(--accent);font-weight:700">${inst===state.myInstrument?'✓':''}</span>`;b.addEventListener('click',()=>{state.myInstrument=inst;saveAppState();onInstrumentChanged();closeSheet('sInstrument');renderAll();});l.appendChild(b);});}
+function renderInstrumentPicker(){
+  const l=$('instList');l.innerHTML='';
+  const all=getAllInstruments();
+  all.forEach(inst=>{
+    const isCustom=!INSTRUMENTS.includes(inst);
+    const row=document.createElement('div');row.className='row';row.setAttribute('role','button');row.tabIndex=0;
+    row.innerHTML=`<span style="display:flex;align-items:center;gap:10px;min-width:0;flex:1"><span style="font-size:19px">${getInstrumentIcon(inst)}</span><span class="t">${esc(inst)}</span></span><span style="display:flex;align-items:center;gap:8px"><span style="color:var(--accent);font-weight:700">${inst===state.myInstrument?'✓':''}</span>${isCustom?'<button type="button" class="icon sm" data-del-inst aria-label="Eliminar" style="color:var(--red)">✕</button>':''}</span>`;
+    row.addEventListener('click',()=>{state.myInstrument=inst;saveAppState();onInstrumentChanged();closeSheet('sInstrument');renderAll();});
+    const del=row.querySelector('[data-del-inst]');
+    if(del)del.addEventListener('click',e=>{e.stopPropagation();state.customInstruments=state.customInstruments.filter(c=>c.name!==inst);if(state.myInstrument===inst)state.myInstrument='Trompeta 1';saveAppState();refreshInstrumentSelects();renderInstrumentPicker();renderAll();});
+    l.appendChild(row);
+  });
+  const pk=$('customInstIconPicker');
+  if(pk){
+    pk.innerHTML='';
+    BASIC_INST_ICONS.forEach(ic=>{
+      const b=document.createElement('button');b.type='button';
+      b.className='icon sm';b.textContent=ic;
+      if(state.selectedCustomIcon===ic)b.style.boxShadow='0 0 0 2px var(--accent)';
+      b.addEventListener('click',()=>{state.selectedCustomIcon=ic;renderInstrumentPicker();});
+      pk.appendChild(b);
+    });
+  }
+}
 function onInstrumentChanged(){mqUpdatePresence();sendOfflineHello();}
 function renderAll(){applyRole();updateConnBadge();renderHeader();renderActiveViewer();if(state.appRole==='master'||sheetStack.includes('sRepertoire')){renderScenes();renderSetlist();}}
 function setZen(v){state.zenMode=v;document.body.classList.toggle('zen',v);renderAll();}
@@ -1002,10 +1059,15 @@ function dropPdfCaches(key){delete state.pdfPages[key];if(pdfDocCache[key]){try{
 /* ===== Arranque ===== */
 function initAtrilSyncApp(){
   loadAppState();restorePdfsFromDb();
-  const instOpts=INSTRUMENTS.map(i=>`<option value="${i}">${i}</option>`).join('');
-  $('selectBatchInstrument').innerHTML='<option value="AUTO">Detectar por el nombre del archivo</option>'+INSTRUMENTS.map(i=>`<option value="${i}">Todos son de ${i}</option>`).join('');
-  $('selectMusicianLibInstrument').innerHTML=instOpts;
-  $('selectProfileInstrument').innerHTML=instOpts;
+  window.refreshInstrumentSelects=()=>{
+    const all=getAllInstruments();
+    const opts=all.map(i=>`<option value="${esc(i)}">${getInstrumentIcon(i)} ${esc(i)}</option>`).join('');
+    $('selectBatchInstrument').innerHTML='<option value="AUTO">Detectar por el nombre del archivo</option>'+all.map(i=>`<option value="${esc(i)}">Todos son de ${esc(i)}</option>`).join('');
+    $('selectMusicianLibInstrument').innerHTML=opts;
+    $('selectProfileInstrument').innerHTML=opts;
+    $('selectProfileInstrument').value=state.myInstrument;
+  };
+  window.refreshInstrumentSelects();
   $('inputProfileName').value=state.userName||'';
   $('selectProfileInstrument').value=state.myInstrument;
   const gOpts=ASSIGNABLE_GENRES.map(g=>`<option value="${g}">${g}</option>`).join('');$('selectNewSongGenre').innerHTML=gOpts;$('selectBulkGenre').innerHTML=gOpts;
@@ -1157,7 +1219,7 @@ function initAtrilSyncApp(){
     const songs=getActiveSongs(),code=$('inputNewSongId').value.trim()||`Canción ${songs.length+1}`,title=$('inputNewSongTitle').value.trim()||code,key=$('inputNewSongKey').value.trim()||'Do Menor (Cm)',bpm=Math.min(260,Math.max(30,parseInt($('inputNewSongBpm').value,10)||120)),genre=$('selectNewSongGenre').value||'Sin género';
     if(editingSongIdx!==null&&songs[editingSongIdx]){
       const s=songs[editingSongIdx],old=s.code;Object.assign(s,{code,title,key,bpm,genre});
-      if(old!==code)INSTRUMENTS.forEach(inst=>{const ok=`${old}|${inst}`,nk=`${code}|${inst}`;if(state.uploadedPdfs[ok]){state.uploadedPdfs[nk]=state.uploadedPdfs[ok];delete state.uploadedPdfs[ok];if(state.pdfPages[ok]){state.pdfPages[nk]=state.pdfPages[ok];delete state.pdfPages[ok];}if(pdfDocCache[ok]){try{pdfDocCache[ok].doc.destroy();}catch(e){}delete pdfDocCache[ok];}persistPdfToDb(nk,state.uploadedPdfs[nk]);deletePdfFromDb(ok);}});
+      if(old!==code)getAllInstruments().forEach(inst=>{const ok=`${old}|${inst}`,nk=`${code}|${inst}`;if(state.uploadedPdfs[ok]){state.uploadedPdfs[nk]=state.uploadedPdfs[ok];delete state.uploadedPdfs[ok];if(state.pdfPages[ok]){state.pdfPages[nk]=state.pdfPages[ok];delete state.pdfPages[ok];}if(pdfDocCache[ok]){try{pdfDocCache[ok].doc.destroy();}catch(e){}delete pdfDocCache[ok];}persistPdfToDb(nk,state.uploadedPdfs[nk]);deletePdfFromDb(ok);}});
       if(state.metronomeOn&&state.currentSongIndex===editingSongIdx){stopMetronome();startMetronome();}
     }else{songs.push(newSong(code,{id:'song_'+Date.now(),title,key,bpm,genre}));state.currentSongIndex=songs.length-1;state.currentPage=1;}
     editingSongIdx=null;closeSheet('sSong');saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();
@@ -1183,16 +1245,16 @@ function initAtrilSyncApp(){
   /* organizar PDFs */
   window.renderRoutingModal=()=>{
     const tabs=$('routingInstrumentTabs'),listEl=$('routingList'),q=$('inputRoutingSearch').value.trim().toLowerCase(),allKeys=Object.keys(state.uploadedPdfs),songs=getActiveSongs();
-    const counts={Todos:allKeys.length,'Sin asignar':0};INSTRUMENTS.forEach(i=>counts[i]=0);
+    const allInst=getAllInstruments();const counts={Todos:allKeys.length,'Sin asignar':0};allInst.forEach(i=>counts[i]=0);
     allKeys.forEach(k=>{if(k.startsWith('__UNASSIGNED__|'))counts['Sin asignar']++;else{const i=k.split('|')[1];if(counts[i]!==undefined)counts[i]++;}});
-    tabs.innerHTML='';['Todos',...INSTRUMENTS,'Sin asignar'].forEach(t=>{const b=document.createElement('button');b.className='chip'+(state.routingFilterInst===t?' on':'');b.textContent=`${t} ${counts[t]||0}`;b.addEventListener('click',()=>{state.routingFilterInst=t;window.renderRoutingModal();});tabs.appendChild(b);});
+    tabs.innerHTML='';['Todos',...allInst,'Sin asignar'].forEach(t=>{const b=document.createElement('button');b.className='chip'+(state.routingFilterInst===t?' on':'');b.textContent=`${t} ${counts[t]||0}`;b.addEventListener('click',()=>{state.routingFilterInst=t;window.renderRoutingModal();});tabs.appendChild(b);});
     listEl.innerHTML='';let shown=0;
     allKeys.sort((a,b)=>(state.uploadedPdfs[a].name||'').localeCompare(state.uploadedPdfs[b].name||'',undefined,{numeric:true})).forEach(oldKey=>{
       const file=state.uploadedPdfs[oldKey];if(!file)return;const un=oldKey.startsWith('__UNASSIGNED__|'),parts=oldKey.split('|'),curSong=un?'':parts[0],curInst=parts[1]||state.myInstrument;
       if(state.routingFilterInst==='Sin asignar'&&!un)return;if(state.routingFilterInst!=='Todos'&&state.routingFilterInst!=='Sin asignar'&&(un||curInst!==state.routingFilterInst))return;
       if(q&&!file.name.toLowerCase().includes(q)&&!curSong.toLowerCase().includes(q))return;shown++;
       const kb=Math.max(1,Math.round((file.size||0)/1024)),row=document.createElement('div');row.className='group';row.style.padding='12px';row.style.display='flex';row.style.flexDirection='column';row.style.gap='8px';
-      const io=INSTRUMENTS.map(i=>`<option value="${esc(i)}" ${curInst===i?'selected':''}>${esc(i)}</option>`).join('');
+      const io=allInst.map(i=>`<option value="${esc(i)}" ${curInst===i?'selected':''}>${esc(i)}</option>`).join('');
       const so=[`<option value="__UNASSIGNED__" ${un?'selected':''}>— Sin asignar —</option>`].concat(songs.map(s=>`<option value="${esc(s.code)}" ${!un&&curSong===s.code?'selected':''}>${esc(s.title)}</option>`)).join('');
       row.innerHTML=`<div><div class="t">${esc(file.name)}</div><div class="s">${kb} KB · ${un?'<span style="color:var(--accent)">Sin asignar</span>':esc(curSong+' · '+curInst)}</div></div><div class="flex"><select class="input sel-route-inst grow" style="min-height:38px;font-size:14px">${io}</select><select class="input sel-route-song grow" style="min-height:38px;font-size:14px">${so}</select></div><div class="flex"><button class="btn sm btn-route-view grow">Abrir</button><button class="btn sm danger btn-route-del">Eliminar</button></div>`;
       const reassign=()=>{const ni=row.querySelector('.sel-route-inst').value,ns=row.querySelector('.sel-route-song').value,nk=ns==='__UNASSIGNED__'?`__UNASSIGNED__|${ni}|${Date.now()}_${Math.floor(Math.random()*1e4)}`:`${ns}|${ni}`;if(nk===oldKey)return;delete state.uploadedPdfs[oldKey];dropPdfCaches(oldKey);deletePdfFromDb(oldKey);dropPdfCaches(nk);state.uploadedPdfs[nk]=file;persistPdfToDb(nk,file);if(isMasterControl())broadcastMasterSignal();window.renderRoutingModal();renderAll();};
@@ -1267,6 +1329,45 @@ function initAtrilSyncApp(){
   armed($('btnClearSongsOnly'),'Vaciar canciones','Toca otra vez para confirmar',()=>{const sc=getLocalScene();sc.songs=[];state.currentSongIndex=0;state.currentPage=1;state.selectedGenre='Todos';saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback('Repertorio vaciado.');});
   armed($('btnClearAllSession'),'Borrar todo (canciones y PDFs)','Toca otra vez para borrar TODO',async()=>{const sc=getLocalScene();sc.songs=[];state.currentSongIndex=0;state.currentPage=1;state.selectedGenre='Todos';state.uploadedPdfs={};state.onlineTempPdfs={};state.pdfPages={};Object.keys(pdfDocCache).forEach(k=>{try{pdfDocCache[k].doc.destroy();}catch(e){}delete pdfDocCache[k];});await clearAllPdfsFromDb();saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();showBaseFeedback('Sesión reiniciada por completo.');});
 
+  const renderIconPickers=()=>{
+    [$('customInstIconPicker'),$('welcomeIconPicker')].forEach(pk=>{
+      if(!pk)return;pk.innerHTML='';
+      BASIC_INST_ICONS.forEach(ic=>{
+        const b=document.createElement('button');b.type='button';b.className='icon sm';b.textContent=ic;
+        if(state.selectedCustomIcon===ic)b.style.boxShadow='0 0 0 2px var(--accent)';
+        b.addEventListener('click',()=>{state.selectedCustomIcon=ic;renderIconPickers();});
+        pk.appendChild(b);
+      });
+    });
+  };
+  renderIconPickers();
+
+  const addCustomInstrument=(rawName,inputEl)=>{
+    const name=String(rawName||'').trim();if(!name)return false;
+    const exists=getAllInstruments().some(i=>i.toLowerCase()===name.toLowerCase());
+    if(!exists){state.customInstruments.push({name,icon:state.selectedCustomIcon||'🎵'});}
+    state.myInstrument=getAllInstruments().find(i=>i.toLowerCase()===name.toLowerCase())||name;
+    if(inputEl)inputEl.value='';
+    saveAppState();window.refreshInstrumentSelects();onInstrumentChanged();renderInstrumentPicker();renderIconPickers();renderAll();
+    return true;
+  };
+
+  $('btnAddCustomInst').addEventListener('click',()=>{
+    if(addCustomInstrument($('inputCustomInstName').value,$('inputCustomInstName'))){
+      showConnToast('success','Instrumento agregado',`${getInstrumentIcon(state.myInstrument)} ${state.myInstrument} seleccionado.`);
+    }
+  });
+  $('btnWelcomeToggleNewInst').addEventListener('click',()=>{
+    $('welcomeCustomInstBox').classList.toggle('hidden');
+    renderIconPickers();
+  });
+  $('btnWelcomeAddInst').addEventListener('click',()=>{
+    if(addCustomInstrument($('inputWelcomeCustomInst').value,$('inputWelcomeCustomInst'))){
+      $('welcomeCustomInstBox').classList.add('hidden');
+      showConnToast('success','Instrumento agregado',`${getInstrumentIcon(state.myInstrument)} ${state.myInstrument} listo.`);
+    }
+  });
+
   renderAll();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAtrilSyncApp);
@@ -1274,4 +1375,3 @@ else initAtrilSyncApp();
 </script>
 </body>
 </html>
-```
