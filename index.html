@@ -75,6 +75,7 @@ button.row:active{background:var(--fill)}
 .tag.blue{background:rgba(100,168,255,.16);color:var(--blue)}
 .tag.gold{background:rgba(229,184,105,.2);color:var(--accent)}
 .t{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.t.full{white-space:normal;overflow:visible;word-break:break-word}
 .s{font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .song-main{min-width:0;flex:1}
 /* sheets */
@@ -248,9 +249,10 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
     <div id="masterSetlistContainer" class="stack" style="gap:6px"></div>
     <div id="masterPaneFoot">
       <div class="flex">
-        <button class="btn sm grow" data-open="sBase">Lista base</button>
+        <button class="btn sm grow" data-open="sBase">Lista</button>
         <button class="btn sm grow" data-open="sGenres">Géneros</button>
         <button class="btn sm grow" data-open="sRouting">Organizar</button>
+        <button class="btn sm grow" id="btnVerifyMasterSync" title="Revisar y limpiar temas sin PDF o duplicados">Verificar</button>
       </div>
       <div class="flex">
         <select id="selectMasterScene" class="input grow" style="min-height:36px;font-size:13px"></select>
@@ -389,7 +391,10 @@ details.group>div{padding:0 12px 12px;display:flex;flex-direction:column;gap:8px
     <div><label class="field">¿De qué instrumento son?</label><select id="selectBatchInstrument" class="input"></select></div>
     <label class="btn primary block" style="cursor:pointer">Elegir PDFs<input id="inputBatchPdfFiles" type="file" accept="application/pdf" multiple class="hidden" /></label>
     <label class="btn block" style="cursor:pointer">Elegir una carpeta (PC / Mac)<input id="inputBatchFolderPc" type="file" webkitdirectory directory multiple class="hidden" /></label>
-    <div class="group"><div class="row"><span style="font-size:14px">Si no coincide con ninguna canción, enviar a "Sin asignar"</span><label class="switch"><input type="checkbox" id="chkImportUnmatchedToInbox" /><i></i></label></div></div>
+    <div class="group">
+      <div class="row"><span style="font-size:14px">Sincronizar lista (quitar temas viejos que no vengan en esta carga)</span><label class="switch"><input type="checkbox" id="chkSyncReplaceSetlist" /><i></i></label></div>
+      <div class="row"><span style="font-size:14px">Si no coincide con ninguna canción, enviar a "Sin asignar"</span><label class="switch"><input type="checkbox" id="chkImportUnmatchedToInbox" /><i></i></label></div>
+    </div>
     <div id="batchImportProgressBox" class="stack hidden" style="gap:8px"><div class="flex" style="justify-content:space-between"><span id="batchImportProgressLabel" class="muted"></span><b id="batchImportProgressPct">0%</b></div><div class="bar"><i id="batchImportProgressBar"></i></div><div id="batchImportCurrentFile" class="muted t"></div></div>
     <div id="batchImportFeedback" class="note ok hidden"></div>
     <button class="btn block" id="btnJumpToRouting">Organizar PDFs cargados</button>
@@ -556,7 +561,7 @@ const GENRES=['Todos','Cumbia','Merengue','Salsa','Ska / Fusión','Balada','Mix 
 const ASSIGNABLE_GENRES=GENRES.filter(g=>g!=='Todos');
 function detectGenreFromName(text){const t=String(text||'').toLowerCase();if(/cumbia/.test(t))return'Cumbia';if(/mereng/.test(t))return'Merengue';if(/salsa/.test(t))return'Salsa';if(/\bska\b|rock|fusion|fusión/.test(t))return'Ska / Fusión';if(/balada|bolero|romant/.test(t))return'Balada';if(/mix|popurri|popurrí|show/.test(t))return'Mix / Show';return'Sin género';}
 
-const state={appRole:'master',hasChosenRole:false,zenMode:false,invertColors:false,zoomLevel:1,userName:'',myInstrument:'Trompeta 1',customInstruments:[],selectedCustomIcon:'🎺',searchQuery:'',selectedGenre:'Todos',currentSceneId:'scene_default',scenes:[{id:'scene_default',name:'Repertorio',songs:[]}],currentSongIndex:0,currentPage:1,activeCue:'',uploadedPdfs:{},onlineTempPdfs:{},masterPdfCatalog:{},autoStreamPdf:true,syncMasterPage:false,masterMobileTab:'list',routingFilterInst:'Todos',pendingPdfTransfers:{},pdfPages:{},remoteSongs:null,offlineRole:'none',onlineRole:'none',offlinePeers:[],pendingOffline:null,pendingTimer:null,musicianPc:null,musicianDc:null,lastQrPayload:'',qrStream:null,qrScanRaf:null,keepStream:null,isProcessingQr:false,metronomeOn:false,metronomeTimer:null,metronomeSong:null,audioCtx:null,offlineReady:false};
+const state={appRole:'master',hasChosenRole:false,zenMode:false,invertColors:false,zoomLevel:1,userName:'',myInstrument:'Trompeta 1',customInstruments:[],selectedCustomIcon:'🎺',searchQuery:'',selectedGenre:'Todos',currentSceneId:'scene_default',scenes:[{id:'scene_default',name:'Repertorio',songs:[]}],currentSongIndex:0,currentPage:1,activeCue:'',uploadedPdfs:{},onlineTempPdfs:{},masterPdfCatalog:{},autoStreamPdf:true,syncMasterPage:false,masterMobileTab:'list',routingFilterInst:'Todos',pendingPdfTransfers:{},pdfPages:{},remoteSongs:null,previewOverride:null,offlineRole:'none',onlineRole:'none',offlinePeers:[],pendingOffline:null,pendingTimer:null,musicianPc:null,musicianDc:null,lastQrPayload:'',qrStream:null,qrScanRaf:null,keepStream:null,isProcessingQr:false,metronomeOn:false,metronomeTimer:null,metronomeSong:null,audioCtx:null,offlineReady:false};
 
 function getRole(){if(state.appRole==='solo')return'solo';if(state.offlineRole==='musician'||state.onlineRole==='musician')return'musician';if(state.offlineRole==='master'||state.onlineRole==='master')return'master';return state.appRole;}
 function isMasterControl(){return getRole()==='master';}
@@ -572,7 +577,7 @@ async function dbTx(mode,fn){try{const db=await openPdfDb();return await new Pro
 const persistPdfToDb=(key,file)=>dbTx('readwrite',s=>s.put({key,name:file.name,blob:file}));
 const deletePdfFromDb=key=>dbTx('readwrite',s=>s.delete(key));
 const clearAllPdfsFromDb=()=>dbTx('readwrite',s=>s.clear());
-async function restorePdfsFromDb(){const rows=await dbTx('readonly',s=>s.getAll());(rows||[]).forEach(row=>{if(row&&row.key&&row.blob)state.uploadedPdfs[row.key]=new File([row.blob],row.name||'partitura.pdf',{type:'application/pdf'});});renderAll();}
+async function restorePdfsFromDb(){const rows=await dbTx('readonly',s=>s.getAll());(rows||[]).forEach(row=>{if(row&&row.key&&row.blob)state.uploadedPdfs[row.key]=new File([row.blob],row.name||'partitura.pdf',{type:'application/pdf'});});renderAll();if(state.appRole==='master'&&typeof window.verifyMasterSync==='function')window.verifyMasterSync(true);}
 
 /* ===== Sincronización ===== */
 let syncChannel=null;
@@ -844,7 +849,7 @@ function showEmpty(kind,song,inst){
   else el.innerHTML=`<div class="big">📄</div><h3>Falta tu partitura</h3><p>No hay PDF de <b>${esc(inst)}</b> para “${esc(song.title)}”.</p><button class="btn primary" data-act="upload">Subir PDF</button><button class="btn" data-open="sInstrument">Cambiar instrumento</button>`;
 }
 async function renderPdf(song,inst,pageNum){
-  const seq=++pdfRenderSeq,key=`${song.code}|${inst}`,file=state.uploadedPdfs[key]||state.onlineTempPdfs[key],canvas=$('pdfRenderCanvas');
+  const seq=++pdfRenderSeq,ovr=state.previewOverride,key=ovr?ovr.key:`${song.code}|${inst}`,file=ovr?ovr.file:(state.uploadedPdfs[key]||state.onlineTempPdfs[key]),canvas=$('pdfRenderCanvas');
   if(!file){showEmpty('nopdf',song,inst);return;}
   if(!window.pdfjsLib){showEmpty('nolib');return;}
   try{
@@ -880,6 +885,14 @@ function renderActiveViewer(){
   const cue=$('stageCueBanner');if(state.activeCue){cue.textContent=state.activeCue;cue.classList.remove('hidden');}else cue.classList.add('hidden');
   $('pdfRenderCanvas').classList.toggle('night',state.invertColors);
   const bar=$('remoteBar');
+  if(state.previewOverride){
+    $('curTitle').textContent=state.previewOverride.file.name;
+    $('curSub').textContent='Vista previa · Organizar PDFs';
+    updatePageLabels({code:state.previewOverride.key,pages:state.pdfPages[state.previewOverride.key]||1});
+    bar.classList.add('hidden');
+    renderPdf({code:state.previewOverride.key,title:state.previewOverride.file.name},state.myInstrument,state.currentPage);
+    return;
+  }
   if(!song){updatePageLabels({code:'',pages:1});showEmpty('nosongs');bar.classList.add('hidden');return;}
   updatePageLabels(song);
   const inst=state.myInstrument,curKey=`${song.code}|${inst}`,hasLocal=!!state.uploadedPdfs[curKey],hasTemp=!!state.onlineTempPdfs[curKey],meta=state.masterPdfCatalog[curKey];
@@ -935,7 +948,7 @@ function fillSongList(c,songs,q,isMasterSide){
     row.setAttribute('role','button');row.tabIndex=0;
     const controls=canEdit?`<button class="icon sm" data-up aria-label="Subir" ${idx===0?'disabled style="opacity:.25"':''}>↑</button><button class="icon sm" data-down aria-label="Bajar" ${idx===songs.length-1?'disabled style="opacity:.25"':''}>↓</button><button class="icon sm" data-edit aria-label="Editar">✎</button>`:'';
     row.innerHTML=`<div class="song-main"><div class="t">${idx+1}. ${esc(song.title)}</div><div class="s">${esc(song.key)} · ${esc(song.bpm)} BPM · ${esc(g)}</div></div><span class="tag ${cl}">${tx}</span>${controls}`;
-    const pick=()=>{state.currentSongIndex=idx;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();if(!isMasterSide)closeSheet('sRepertoire');renderAll();};
+    const pick=()=>{state.previewOverride=null;state.currentSongIndex=idx;state.currentPage=1;saveAppState();if(isMasterControl())broadcastMasterSignal();if(!isMasterSide)closeSheet('sRepertoire');renderAll();};
     row.addEventListener('click',pick);row.addEventListener('keydown',e=>{if(e.key==='Enter')pick();});
     const up=row.querySelector('[data-up]');if(up)up.addEventListener('click',e=>{e.stopPropagation();moveSong(idx,-1);});
     const dn=row.querySelector('[data-down]');if(dn)dn.addEventListener('click',e=>{e.stopPropagation();moveSong(idx,1);});
@@ -982,8 +995,8 @@ function setZen(v){state.zenMode=v;document.body.classList.toggle('zen',v);rende
 /* ===== Navegación ===== */
 function nextPageAction(b){const songs=getActiveSongs(),song=songs[state.currentSongIndex];if(!song)return;if(state.currentPage<getPages(song))state.currentPage++;else if(state.currentSongIndex<songs.length-1){state.currentSongIndex++;state.currentPage=1;}saveAppState();if(b)broadcastMasterSignal();renderAll();}
 function prevPageAction(b){const songs=getActiveSongs();if(state.currentPage>1)state.currentPage--;else if(state.currentSongIndex>0){state.currentSongIndex--;const p=songs[state.currentSongIndex];state.currentPage=p?getPages(p):1;}saveAppState();if(b)broadcastMasterSignal();renderAll();}
-function nextSongAction(b){const songs=getActiveSongs();if(state.currentSongIndex<songs.length-1){state.currentSongIndex++;state.currentPage=1;saveAppState();if(b)broadcastMasterSignal();renderAll();}}
-function prevSongAction(b){if(state.currentSongIndex>0){state.currentSongIndex--;state.currentPage=1;saveAppState();if(b)broadcastMasterSignal();renderAll();}}
+function nextSongAction(b){state.previewOverride=null;const songs=getActiveSongs();if(state.currentSongIndex<songs.length-1){state.currentSongIndex++;state.currentPage=1;saveAppState();if(b)broadcastMasterSignal();renderAll();}}
+function prevSongAction(b){state.previewOverride=null;if(state.currentSongIndex>0){state.currentSongIndex--;state.currentPage=1;saveAppState();if(b)broadcastMasterSignal();renderAll();}}
 
 /* ===== Metrónomo (programado con el reloj de audio) ===== */
 function startMetronome(){
@@ -1138,6 +1151,18 @@ function initAtrilSyncApp(){
       if(Math.hypot(dx,dy)>18)suppressClickUntil=Date.now()+350;
       if(state.zoomLevel<=1.05&&Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx<0)nextPageAction(isMasterControl());else prevPageAction(isMasterControl());}}
     setTimeout(()=>{maxT=0;},50);pd=0;},{passive:true});
+  let wheelZoomTimer=null;
+  surface.addEventListener('wheel',e=>{
+    const canScrollV=surface.scrollHeight>surface.clientHeight+4;
+    if(!e.ctrlKey&&!e.metaKey&&canScrollV)return;
+    e.preventDefault();
+    const step=e.deltaY<0?0.1:-0.1;
+    state.zoomLevel=Math.max(.6,Math.min(2.4,+(state.zoomLevel+step).toFixed(2)));
+    applyZoomPreview();
+    clearTimeout(wheelZoomTimer);
+    wheelZoomTimer=setTimeout(()=>{saveAppState();renderActiveViewer();},140);
+  },{passive:false});
+
   surface.addEventListener('click',e=>{
     if(maxT>=2||Date.now()<suppressClickUntil)return;const r=surface.getBoundingClientRect(),x=(e.clientX-r.left)/r.width;
     if(x<.22){prevPageAction(isMasterControl());return;}if(x>.78){nextPageAction(isMasterControl());return;}
@@ -1172,20 +1197,38 @@ function initAtrilSyncApp(){
     const files=Array.from(e.target.files||[]).filter(f=>f.name.toLowerCase().endsWith('.pdf'));if(!files.length)return;
     state.isImporting=true;
     const mode=$('selectBatchInstrument').value,sorted=files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true})),total=sorted.length;
-    const songs=getLocalScene().songs,toInbox=$('chkImportUnmatchedToInbox').checked;let done=0;
+    const sc=getLocalScene(),songs=sc.songs,toInbox=$('chkImportUnmatchedToInbox').checked,syncReplace=$('chkSyncReplaceSetlist')&&$('chkSyncReplaceSetlist').checked;
+    const touchedCodes=new Set(),touchedInsts=new Set();let done=0;
     $('batchImportFeedback').classList.add('hidden');$('batchImportProgressBox').classList.remove('hidden');$('btnDoneFolderModal').textContent='Espera…';$('btnDoneFolderModal').disabled=true;
     for(const file of sorted){
       const{songCode,detectedInst}=parseSongAndInstrument(file.name,file.webkitRelativePath||'');
       const inst=mode!=='AUTO'?mode:(detectedInst||state.myInstrument),stdName=`${songCode} - ${inst}.pdf`,std=file.name===stdName?file:new File([file],stdName,{type:'application/pdf'});
+      touchedInsts.add(inst);
       let song=findMatchingSong(getActiveSongs(),songCode)||findMatchingSong(songs,songCode),key;
       if(!song&&toInbox)key=`__UNASSIGNED__|${inst}|${Date.now()}_${Math.floor(Math.random()*1e5)}`;
-      else{if(!song){song=newSong(songCode);songs.push(song);}key=`${song.code}|${inst}`;}
+      else{if(!song){song=newSong(songCode);songs.push(song);}touchedCodes.add(song.code);key=`${song.code}|${inst}`;}
       state.uploadedPdfs[key]=std;dropPdfCaches(key);await persistPdfToDb(key,std);done++;
       const pct=Math.round(done/total*100);$('batchImportProgressBar').style.width=pct+'%';$('batchImportProgressPct').textContent=pct+'%';$('batchImportProgressLabel').textContent=`${done} de ${total} PDFs`;$('batchImportCurrentFile').textContent=stdName;
       if(done%4===0)await sleep(0);
     }
+    let removedCount=0;
+    if(syncReplace&&touchedCodes.size){
+      const kept=[];
+      for(const s of songs){
+        if(touchedCodes.has(s.code)){kept.push(s);}
+        else{
+          removedCount++;
+          for(const inst of touchedInsts){
+            const rk=`${s.code}|${inst}`;
+            if(state.uploadedPdfs[rk]){delete state.uploadedPdfs[rk];dropPdfCaches(rk);await deletePdfFromDb(rk);}
+          }
+        }
+      }
+      sc.songs=kept;
+      if(state.currentSongIndex>=sc.songs.length)state.currentSongIndex=Math.max(0,sc.songs.length-1);
+    }
     e.target.value='';state.isImporting=false;saveAppState();$('btnDoneFolderModal').disabled=false;$('btnDoneFolderModal').textContent='Listo';
-    $('batchImportFeedback').textContent=`✓ ${done} PDFs guardados · ${songs.length} canciones en la lista.`;$('batchImportFeedback').classList.remove('hidden');
+    $('batchImportFeedback').textContent=`✓ ${done} PDFs guardados · ${sc.songs.length} canciones activas`+(removedCount?` (${removedCount} viejas eliminadas)`:'')+'.';$('batchImportFeedback').classList.remove('hidden');
     if(isMasterControl())broadcastMasterSignal();renderAll();
   };
   $('inputBatchPdfFiles').addEventListener('change',handleBatchImport);$('inputBatchFolderPc').addEventListener('change',handleBatchImport);
@@ -1256,10 +1299,25 @@ function initAtrilSyncApp(){
       const kb=Math.max(1,Math.round((file.size||0)/1024)),row=document.createElement('div');row.className='group';row.style.padding='12px';row.style.display='flex';row.style.flexDirection='column';row.style.gap='8px';
       const io=allInst.map(i=>`<option value="${esc(i)}" ${curInst===i?'selected':''}>${esc(i)}</option>`).join('');
       const so=[`<option value="__UNASSIGNED__" ${un?'selected':''}>— Sin asignar —</option>`].concat(songs.map(s=>`<option value="${esc(s.code)}" ${!un&&curSong===s.code?'selected':''}>${esc(s.title)}</option>`)).join('');
-      row.innerHTML=`<div><div class="t">${esc(file.name)}</div><div class="s">${kb} KB · ${un?'<span style="color:var(--accent)">Sin asignar</span>':esc(curSong+' · '+curInst)}</div></div><div class="flex"><select class="input sel-route-inst grow" style="min-height:38px;font-size:14px">${io}</select><select class="input sel-route-song grow" style="min-height:38px;font-size:14px">${so}</select></div><div class="flex"><button class="btn sm btn-route-view grow">Abrir</button><button class="btn sm danger btn-route-del">Eliminar</button></div>`;
+      row.innerHTML=`<div><div class="t route-fname" title="${esc(file.name)}" style="cursor:pointer">${esc(file.name)}</div><div class="s">${kb} KB · ${un?'<span style="color:var(--accent)">Sin asignar</span>':esc(curSong+' · '+curInst)} · <span style="opacity:.7">Toca el nombre para ver completo</span></div></div><div class="flex"><select class="input sel-route-inst grow" style="min-height:38px;font-size:14px">${io}</select><select class="input sel-route-song grow" style="min-height:38px;font-size:14px">${so}</select></div><div class="flex"><button class="btn sm btn-route-view grow">Previsualizar</button><button class="btn sm danger btn-route-del">Eliminar</button></div>`;
       const reassign=()=>{const ni=row.querySelector('.sel-route-inst').value,ns=row.querySelector('.sel-route-song').value,nk=ns==='__UNASSIGNED__'?`__UNASSIGNED__|${ni}|${Date.now()}_${Math.floor(Math.random()*1e4)}`:`${ns}|${ni}`;if(nk===oldKey)return;delete state.uploadedPdfs[oldKey];dropPdfCaches(oldKey);deletePdfFromDb(oldKey);dropPdfCaches(nk);state.uploadedPdfs[nk]=file;persistPdfToDb(nk,file);if(isMasterControl())broadcastMasterSignal();window.renderRoutingModal();renderAll();};
       row.querySelector('.sel-route-inst').addEventListener('change',reassign);row.querySelector('.sel-route-song').addEventListener('change',reassign);
-      row.querySelector('.btn-route-view').addEventListener('click',()=>{if(un)return;const i=songs.findIndex(s=>s.code===curSong);if(i>=0)state.currentSongIndex=i;state.myInstrument=curInst;state.currentPage=1;closeSheet('sRouting');saveAppState();renderAll();});
+      row.querySelector('.route-fname').addEventListener('click',function(){this.classList.toggle('full');});
+      row.querySelector('.btn-route-view').addEventListener('click',()=>{
+        state.currentPage=1;
+        state.masterMobileTab='score';
+        if(un){
+          state.previewOverride={key:oldKey,file};
+        }else{
+          state.previewOverride=null;
+          const i=songs.findIndex(s=>s.code===curSong);
+          if(i>=0)state.currentSongIndex=i;
+          state.myInstrument=curInst;
+          saveAppState();
+        }
+        closeSheet('sRouting');
+        renderAll();
+      });
       const delBtn=row.querySelector('.btn-route-del');let armDelRoute=false;delBtn.addEventListener('click',()=>{if(!armDelRoute){armDelRoute=true;delBtn.textContent='¿Borrar?';setTimeout(()=>{armDelRoute=false;delBtn.textContent='Eliminar';},3500);return;}delete state.uploadedPdfs[oldKey];dropPdfCaches(oldKey);deletePdfFromDb(oldKey);if(isMasterControl())broadcastMasterSignal();window.renderRoutingModal();renderAll();});
       listEl.appendChild(row);
     });
@@ -1367,6 +1425,43 @@ function initAtrilSyncApp(){
       showConnToast('success','Instrumento agregado',`${getInstrumentIcon(state.myInstrument)} ${state.myInstrument} listo.`);
     }
   });
+
+  let armVerifyClean=false;
+  window.verifyMasterSync=async(silent)=>{
+    const sc=getLocalScene(),songs=sc.songs,allPdfKeys=Object.keys(state.uploadedPdfs);
+    // Deduplicate songs by normalized code
+    const seen=new Set(),deduped=[];let dups=0;
+    songs.forEach(s=>{const nk=normSongKey(s.code);if(seen.has(nk)){dups++;return;}seen.add(nk);deduped.push(s);});
+    if(dups){sc.songs=deduped;if(state.currentSongIndex>=deduped.length)state.currentSongIndex=Math.max(0,deduped.length-1);saveAppState();renderAll();}
+
+    const orphanSongs=sc.songs.filter(s=>!allPdfKeys.some(k=>k.startsWith(s.code+'|')));
+    const btn=$('btnVerifyMasterSync');
+    if(silent){
+      if(orphanSongs.length&&allPdfKeys.length){
+        showConnToast('error','Revisión del repertorio',`${orphanSongs.length} canciones sin PDF en memoria. Toca "Verificar" para limpiarlas.`);
+      }
+      return;
+    }
+    if(!orphanSongs.length){
+      armVerifyClean=false;if(btn)btn.textContent='Verificar';
+      showConnToast('success','Todo sincronizado',`${sc.songs.length} canciones verificadas con ${allPdfKeys.length} PDFs${dups?' ('+dups+' duplicadas limpiadas)':''}.`);
+      return;
+    }
+    if(!armVerifyClean){
+      armVerifyClean=true;
+      if(btn)btn.textContent=`¿Limpiar ${orphanSongs.length}?`;
+      showConnToast('error',`${orphanSongs.length} temas sin PDF`,`Toca "¿Limpiar ${orphanSongs.length}?" otra vez para quitarlos, o usa "Cargar PDFs".`);
+      setTimeout(()=>{armVerifyClean=false;if(btn)btn.textContent='Verificar';},5000);
+      return;
+    }
+    armVerifyClean=false;if(btn)btn.textContent='Verificar';
+    sc.songs=sc.songs.filter(s=>allPdfKeys.some(k=>k.startsWith(s.code+'|')));
+    if(state.currentSongIndex>=sc.songs.length)state.currentSongIndex=Math.max(0,sc.songs.length-1);
+    state.currentPage=1;
+    saveAppState();if(isMasterControl())broadcastMasterSignal();renderAll();
+    showConnToast('success','Repertorio limpiado',`Se quitaron ${orphanSongs.length} temas sin PDF. Quedan ${sc.songs.length} canciones.`);
+  };
+  $('btnVerifyMasterSync').addEventListener('click',()=>window.verifyMasterSync(false));
 
   renderAll();
 }
